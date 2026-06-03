@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getArticlePaging } from "@/api/article";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 import { getTagList } from "@/api/tag";
 import { getCateList, getCateArticleCount } from "@/api/cate";
 import { getLinkList } from "@/api/web";

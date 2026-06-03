@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getFootprintList } from "@/api/footprint";
 import { formatDate } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 import { FootprintMap } from "@/components/ui/FootprintMap";
 import { FootprintGallery } from "./FootprintGallery";
 

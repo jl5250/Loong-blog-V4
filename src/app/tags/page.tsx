@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTagList } from "@/api/tag";
 import { getCateArticleCount } from "@/api/cate";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "标签云" };

@@ -1,6 +1,6 @@
 import { getPageConfig } from "@/api/config";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 interface EquipmentItem {
   name: string;

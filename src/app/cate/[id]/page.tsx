@@ -3,7 +3,7 @@ import { getCateList } from "@/api/cate";
 import { getArticlePaging } from "@/api/article";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 import { formatDate } from "@/lib/format";
 
 interface Props {

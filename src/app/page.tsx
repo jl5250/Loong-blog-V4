@@ -12,7 +12,7 @@ import { getTagList } from "@/api/tag";
 import { getCateList } from "@/api/cate";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function Home() {
   // Fetch data
