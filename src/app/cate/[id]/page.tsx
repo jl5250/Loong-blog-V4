@@ -21,14 +21,15 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function CatePage(props: Props) {
   const params = await props.params;
+  const cateId = Number(params.id);
 
   const [listRes, articlesRes] = await Promise.allSettled([
     getCateList(),
-    getArticlePaging(1, 20),
+    getArticlePaging(1, 20, "", cateId),
   ]);
 
   const cates = listRes.status === "fulfilled" ? ((listRes.value.data as any)?.result ?? []) : [];
-  const cate = cates.find((c: any) => c.id === Number(params.id));
+  const cate = cates.find((c: any) => c.id === cateId);
   const articles = articlesRes.status === "fulfilled" ? (articlesRes.value.data?.result ?? []) : [];
 
   return (
