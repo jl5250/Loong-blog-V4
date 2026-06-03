@@ -29,6 +29,7 @@ function ReadingProgress() {
 /* ───── TOC ───── */
 function TOCSidebar() {
   const [activeId, setActiveId] = useState("");
+  const [visible, setVisible] = useState(false);
   const headingsRef = useRef<{ id: string; text: string; level: number }[]>([]);
 
   useEffect(() => {
@@ -45,10 +46,20 @@ function TOCSidebar() {
     return () => obs.disconnect();
   }, []);
 
+  // Show TOC only after scrolling past the hero section
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   if (headingsRef.current.length === 0) return null;
 
   return (
-    <aside className="hidden xl:block fixed left-8 top-32 w-56 text-sm z-40 max-h-[60vh] overflow-y-auto">
+    <aside className={`hidden xl:block fixed left-8 top-32 w-56 text-sm z-40 max-h-[60vh] overflow-y-auto transition-opacity duration-500 ${
+      visible ? "opacity-100" : "opacity-0 pointer-events-none"
+    }`}>
       <h4 className="font-serif font-bold text-xs text-text-muted mb-3 tracking-wider uppercase">目录</h4>
       <nav className="space-y-1.5">
         {headingsRef.current.map((h, i) => (
@@ -111,12 +122,12 @@ export function ArticleContent({ article }: { article: Article }) {
             </div>
 
             {/* Title */}
-            <h1 className="font-serif font-bold text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 drop-shadow-2xl">
+            <h1 className="font-serif font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 drop-shadow-2xl">
               {article.title}
             </h1>
 
             {/* Meta */}
-            <div className="flex justify-center items-center gap-5 md:gap-8 text-base font-sans text-text-body/90 flex-wrap">
+            <div className="flex justify-center items-center gap-3 md:gap-8 text-xs md:text-base font-sans text-text-body/90 flex-wrap">
               <span className="flex items-center gap-2">
                 <span>📅</span>
                 <span className="font-medium">{formatDate(article.createTime)}</span>
@@ -149,7 +160,7 @@ export function ArticleContent({ article }: { article: Article }) {
         </section>
 
         {/* ───── Content below cover ───── */}
-        <div className="max-w-3xl mx-auto px-6 md:px-8 py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 py-12 md:py-16">
           <article>
             {/* Description */}
             {article.description && (
@@ -180,7 +191,7 @@ export function ArticleContent({ article }: { article: Article }) {
             <ArticleComments articleId={article.id!} />
 
             {/* Prev / Next */}
-            <nav className="mt-12 pt-8 border-t border-border grid grid-cols-2 gap-6">
+            <nav className="mt-12 pt-8 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {article.prev?.id ? (
                 <Link href={`/article/${article.prev.id}`} className="group p-5 rounded-xl border border-border hover:border-accent/40 transition-all">
                   <span className="text-xs font-sans text-text-muted mb-2 block tracking-wider">上一篇</span>

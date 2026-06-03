@@ -20,7 +20,7 @@ export default async function FootprintPage() {
   const footprints = Array.isArray(res.data) ? res.data : [];
 
   return (
-    <main className="flex-1 pt-28 pb-20">
+    <main className="flex-1 pt-24 sm:pt-28 pb-20">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-accent/3 blur-[120px]" />
@@ -28,7 +28,7 @@ export default async function FootprintPage() {
         <div className="absolute bottom-1/4 left-0 w-64 h-64 rounded-full bg-accent/3 blur-[80px]" />
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 relative">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 relative">
         {/* Header */}
         <div className="text-center mb-12">
           <span className="font-calligraphy text-6xl md:text-7xl text-text-muted/10 mb-4 block">足</span>
@@ -71,6 +71,7 @@ export default async function FootprintPage() {
                             <img
                               src={images[0]}
                               alt={f.title}
+                              loading="lazy"
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                           ) : (

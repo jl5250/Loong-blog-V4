@@ -39,7 +39,7 @@ export default function FishpondPage() {
   }
 
   return (
-    <main className="flex-1 pt-28 pb-20">
+    <main className="flex-1 pt-24 sm:pt-28 pb-20">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-accent/3 blur-[120px]" />
@@ -56,7 +56,7 @@ export default function FishpondPage() {
         </div>
 
         {rssData && rssData.length > 0 ? (
-          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5">
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3 md:gap-5 space-y-3 md:space-y-5">
             {rssData.map((item, index) => (
               <article
                 key={`${item.url}-${index}`}
@@ -69,7 +69,7 @@ export default function FishpondPage() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-9 h-9 rounded-full overflow-hidden bg-bg-card flex-shrink-0 border border-border">
                     {item.image ? (
-                      <img src={item.image} alt={getAuthorName(item)} className="w-full h-full object-cover" />
+                      <img src={item.image} alt={getAuthorName(item)} loading="lazy" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[.6rem] font-bold text-text-muted">
                         {getAuthorName(item)[0]}

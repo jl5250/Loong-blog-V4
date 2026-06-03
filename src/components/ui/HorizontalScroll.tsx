@@ -51,7 +51,7 @@ export function HorizontalScroll({ children, className = "" }: HorizontalScrollP
   }, [lenis]);
 
   return (
-    <div ref={ref} className={`overflow-x-auto scrollbar-none cursor-grab active:cursor-grabbing select-none ${className}`}>
+    <div ref={ref} className={`overflow-x-auto scrollbar-none cursor-grab active:cursor-grabbing select-none ${className}`} style={{ touchAction: "pan-y" }}>
       {children}
     </div>
   );

@@ -10,6 +10,18 @@ export function Providers({ children }: { children: ReactNode }) {
     try {
       window.history.scrollRestoration = "manual";
     } catch {}
+
+    // Patch releasePointerCapture to suppress pointer capture errors in image viewer
+    const orig = Element.prototype.releasePointerCapture;
+    const patched = function (this: Element, id: number) {
+      try { orig.call(this, id); } catch { /* suppress - lib calls releasePointerCapture without active pointer */ }
+    };
+    let mounted = true;
+    (Element.prototype as any).releasePointerCapture = patched;
+    return () => {
+      mounted = false;
+      (Element.prototype as any).releasePointerCapture = orig;
+    };
   }, []);
 
   return (

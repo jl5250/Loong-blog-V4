@@ -53,8 +53,8 @@ export default async function DataPage() {
   const maxCount = Math.max(...cateCounts.map((c: any) => c.count ?? 0), 1);
 
   return (
-    <main className="flex-1 pt-28 pb-20">
-      <div className="max-w-5xl mx-auto px-6">
+    <main className="flex-1 pt-24 sm:pt-28 pb-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <span className="font-calligraphy text-6xl md:text-7xl text-text-muted/10 mb-4 block">数</span>
           <h1 className="font-serif font-bold text-3xl md:text-4xl mb-2">数据</h1>
@@ -62,7 +62,7 @@ export default async function DataPage() {
         </div>
 
         {/* Stats cards */}
-        <div className="grid md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-10">
           {[
             { label: "文章总计", value: String(totalArticles), color: "#ff4757", icon: "📝" },
             { label: "评论总计", value: String(comments.length), color: "#00d2d3", icon: "💬" },

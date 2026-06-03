@@ -103,10 +103,11 @@ export default async function Home() {
             <HorizontalScroll className="flex gap-5 pb-3">
               {articles.length > 0 ? articles.map((a) => (
                 <Link key={a.id} href={`/article/${a.id}`}
-                  className="min-w-[340px] max-w-[380px] flex-shrink-0 snap-start rounded-2xl border border-border bg-bg-card overflow-hidden transition-all duration-400 hover:-translate-y-1.5 hover:border-accent hover:shadow-[0_16px_48px_var(--glow-soft)] relative flex flex-col">
+                  className="min-w-[280px] max-md:min-w-[75vw] max-w-[380px] w-full flex-shrink-0 snap-start rounded-2xl border border-border bg-bg-card overflow-hidden transition-all duration-400 hover:-translate-y-1.5 hover:border-accent hover:shadow-[0_16px_48px_var(--glow-soft)] relative flex flex-col self-stretch">
                   <div
                     className="h-[180px] flex-shrink-0 relative overflow-hidden bg-cover bg-center"
-                    style={{ backgroundImage: articleCover(a.cover, a.id) }}
+                    style={{ backgroundImage: articleCover(a.cover, a.id), backgroundSize: "cover" }}
+                    role="img"
                   >
                     <div className="absolute inset-0 bg-gradient-radial from-accent/5 to-transparent opacity-70" />
                     <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-card), transparent 50%)" }} />
@@ -115,7 +116,7 @@ export default async function Home() {
                     </span>
                   </div>
                   <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-serif font-bold text-base mb-1.5 leading-tight">{a.title}</h3>
+                    <h3 className="font-serif font-bold text-sm md:text-base mb-1.5 leading-tight line-clamp-2">{a.title}</h3>
                     <p className="text-xs text-text-muted leading-relaxed flex-1 line-clamp-2 mb-0">{a.description}</p>
                     <div className="flex items-center gap-2.5 text-[.65rem] text-text-muted mt-auto pt-2.5 border-t border-border">
                       <span>{formatDate(a.createTime)}</span>
@@ -147,7 +148,7 @@ export default async function Home() {
               <h2><span className="text-gold">最新文章</span><span className="en">LATEST</span></h2>
               <hr />
             </div>
-            <div className="grid md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               {articles.length > 0 ? articles.map((a) => (
                 <Link key={a.id} href={`/article/${a.id}`}
                   className="border border-border rounded-2xl overflow-hidden bg-bg-card transition-all duration-400 hover:-translate-y-1 hover:border-accent2 hover:shadow-[0_12px_40px_var(--glow-soft)] relative flex flex-col group">
@@ -208,7 +209,7 @@ export default async function Home() {
               <h2><span className="text-accent2">最新评论</span><span className="en">COMMENTS</span></h2>
               <hr />
             </div>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {comments.length > 0 ? comments.slice(0, 3).map((c, i) => {
                 const colors = ["accent", "accent2", "gold"];
                 const color = colors[i % colors.length];

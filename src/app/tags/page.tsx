@@ -15,7 +15,7 @@ export default async function TagsPage() {
   const cates = cateRes.status === "fulfilled" ? cateRes.value.data ?? [] : [];
 
   return (
-    <main className="flex-1 pt-32 pb-20 px-8 max-w-5xl mx-auto">
+    <main className="flex-1 pt-28 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
       <h1 className="font-serif font-bold text-3xl md:text-4xl mb-4">标签云</h1>
       <p className="font-kai text-text-muted mb-8">Tag Cloud · 以印章排列</p>
 

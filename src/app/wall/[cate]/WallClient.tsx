@@ -120,7 +120,7 @@ export function WallClient({ cateSlug, cateList, initialWalls }: WallClientProps
       <div className="max-w-6xl mx-auto px-6 pb-16">
         {walls.length > 0 ? (
           <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
               {walls.map((w) => (
                 <WallCard key={w.id} wall={w} />
               ))}

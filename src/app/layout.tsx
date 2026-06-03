@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Header } from "@/components/layout/Header";
 import { FAB } from "@/components/layout/FAB";
-import { MusicPlayer } from "@/components/music/MusicPlayer";
+import { MusicPlayer } from "@/components/music/MusicPlayerLoader";
 
 /* Noto Serif SC — self-hosted subset woff2 (eliminates Google Fonts CDN) */
 const notoSerifSC = localFont({

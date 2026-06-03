@@ -29,7 +29,7 @@ export default async function MyPage() {
   const bio = info?.profession || info?.know_me || "";
 
   return (
-    <main className="flex-1 pt-28 pb-20 px-6">
+    <main className="flex-1 pt-24 sm:pt-28 pb-20 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -38,7 +38,7 @@ export default async function MyPage() {
           <p className="font-kai text-text-muted text-sm">{bio}</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {/* Sidebar */}
           <div className="md:col-span-1">
             <div className="border border-border rounded-2xl p-6 bg-bg-surface text-center sticky top-28">

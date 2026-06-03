@@ -32,7 +32,7 @@ export default async function CatePage(props: Props) {
   const articles = articlesRes.status === "fulfilled" ? (articlesRes.value.data?.result ?? []) : [];
 
   return (
-    <main className="flex-1 pt-32 pb-20 px-8 max-w-5xl mx-auto">
+    <main className="flex-1 pt-28 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
       <h1 className="font-serif font-bold text-3xl md:text-4xl mb-2">{cate?.name ?? "分类"}</h1>
       {cate?.mark && (
         <p className="font-kai text-text-muted mb-8 text-sm">{cate.mark.toUpperCase()}</p>
@@ -41,7 +41,7 @@ export default async function CatePage(props: Props) {
         <div className="space-y-4">
           {articles.map((a: any) => (
             <Link key={a.id} href={`/article/${a.id}`}
-              className="block p-6 rounded-2xl border border-border bg-bg-surface hover:border-accent/40 transition-all">
+              className="block p-4 md:p-6 rounded-2xl border border-border bg-bg-surface hover:border-accent/40 transition-all">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <h2 className="font-serif font-bold text-lg mb-1">{a.title}</h2>

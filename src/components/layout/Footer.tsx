@@ -18,26 +18,42 @@ export function Footer() {
   const rt = getRunTime();
 
   return (
-    <footer className="relative z-31 border-t border-border text-center pt-6 pb-20 px-6 max-md:pb-16">
-      <p className="font-calligraphy text-xl text-text-muted/30 mb-5">
+    <footer className="relative z-31 border-t border-border text-center pt-8 pb-24 px-4 max-md:pb-20">
+      <p className="font-calligraphy text-lg text-text-muted/30 mb-5">
         天地一逆旅，同悲万古尘
       </p>
-      <div className="flex justify-center gap-4 flex-wrap mb-2">
-        {["首页", "文章", "标签", "关于", "足迹", "友链"].map((label) => (
+      <div className="flex justify-center gap-4 flex-wrap mb-3">
+        {[
+          { label: "首页", href: "/" },
+          { label: "文章", href: "/cate/1" },
+          { label: "标签", href: "/tags" },
+          { label: "关于", href: "/my" },
+          { label: "足迹", href: "/footprint" },
+          { label: "友链", href: "/friend" },
+        ].map((l) => (
           <Link
-            key={label}
-            href="#"
-            className="font-sans text-[.7rem] text-text-muted no-underline transition-colors hover:text-accent"
+            key={l.label}
+            href={l.href}
+            className="font-sans text-xs text-text-muted/60 no-underline transition-colors hover:text-accent"
           >
-            {label}
+            {l.label}
           </Link>
         ))}
       </div>
-      <p className="font-sans text-[.6rem] text-text-muted/35 pt-2 mt-2 border-t border-border">
-        ThriveX v4 · 墨·赛博 Ink Cyber
+      <p className="font-sans text-xs text-text-muted/35 pt-3 mt-3 border-t border-border/50">
+        基于开源项目{" "}
+        <a
+          href="https://github.com/LiuYuYang01/ThriveX-Admin"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent hover:text-accent2 transition-colors no-underline"
+        >
+          ThriveX
+        </a>{" "}
+        构建
       </p>
-      <p className="font-sans text-[.6rem] text-text-muted/25 mt-1">豫ICP备2020031040号-1</p>
-      <p className="font-sans text-[.6rem] text-text-muted/40 mt-1">
+      <p className="font-sans text-xs text-text-muted/25 mt-1">豫ICP备2020031040号-1</p>
+      <p className="font-sans text-xs text-text-muted/40 mt-1">
         已运行 {rt.years} 年 {rt.months} 个月 {rt.days} 天
       </p>
     </footer>

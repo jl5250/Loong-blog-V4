@@ -1,7 +1,7 @@
 "use client";
 
-import { PhotoProvider, PhotoView } from "react-photo-view";
-import "react-photo-view/dist/react-photo-view.css";
+import { useState } from "react";
+import { ImageViewer } from "@/components/ui/ImageViewer";
 
 interface FootprintGalleryProps {
   images: string[];
@@ -9,35 +9,37 @@ interface FootprintGalleryProps {
 }
 
 export function FootprintGallery({ images, title }: FootprintGalleryProps) {
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+
   if (!images || images.length === 0) return null;
 
+  if (images.length === 1) {
+    return (
+      <>
+        <button
+          onClick={() => setViewerIndex(0)}
+          className="font-sans text-[.55rem] text-accent hover:text-accent2 transition-colors bg-transparent border-none cursor-pointer"
+        >
+          查看图片 ↗
+        </button>
+        {viewerIndex !== null && (
+          <ImageViewer images={images} index={viewerIndex} onClose={() => setViewerIndex(null)} />
+        )}
+      </>
+    );
+  }
+
   return (
-    <PhotoProvider
-      speed={() => 800}
-      easing={(type) =>
-        type === 2
-          ? "cubic-bezier(0.36, 0, 0.66, -0.56)"
-          : "cubic-bezier(0.34, 1.56, 0.64, 1)"
-      }
-    >
-      {images.length === 1 ? (
-        <PhotoView src={images[0]}>
-          <button className="font-sans text-[.55rem] text-accent hover:text-accent2 transition-colors">
-            查看图片 ↗
-          </button>
-        </PhotoView>
-      ) : (
-        <div className="flex gap-1">
-          <PhotoView src={images[0]}>
-            <button className="font-sans text-[.55rem] text-accent hover:text-accent2 transition-colors">
-              {images.length}张图片 ↗
-            </button>
-          </PhotoView>
-          {images.slice(1).map((src, i) => (
-            <PhotoView key={i} src={src} />
-          ))}
-        </div>
+    <>
+      <button
+        onClick={() => setViewerIndex(0)}
+        className="font-sans text-[.55rem] text-accent hover:text-accent2 transition-colors bg-transparent border-none cursor-pointer"
+      >
+        {images.length}张图片 ↗
+      </button>
+      {viewerIndex !== null && (
+        <ImageViewer images={images} index={viewerIndex} onClose={() => setViewerIndex(null)} />
       )}
-    </PhotoProvider>
+    </>
   );
 }

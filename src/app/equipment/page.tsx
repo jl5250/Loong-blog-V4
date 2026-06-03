@@ -34,7 +34,7 @@ export default async function EquipmentPage() {
   } catch {}
 
   return (
-    <main className="flex-1 pt-28 pb-20">
+    <main className="flex-1 pt-24 sm:pt-28 pb-20">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full bg-accent/5 blur-[120px]" />
@@ -67,7 +67,7 @@ export default async function EquipmentPage() {
                 </div>
 
                 {/* Equipment grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                   {group.items.map((item, idx) => (
                     <div
                       key={idx}
@@ -83,6 +83,7 @@ export default async function EquipmentPage() {
                           <img
                             src={item.image}
                             alt={item.name}
+                            loading="lazy"
                             className="relative z-10 h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-110"
                           />
                         ) : (
