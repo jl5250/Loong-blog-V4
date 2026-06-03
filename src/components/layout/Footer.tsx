@@ -32,6 +32,7 @@ export function Footer() {
           { label: "设备", href: "/equipment" },
           { label: "足迹", href: "/footprint" },
           { label: "留言墙", href: "/wall/all" },
+          { label: "谦友", href: "/xue" },
           { label: "友链", href: "/friend" },
           { label: "关于", href: "/my" },
         ].map((l) => (
