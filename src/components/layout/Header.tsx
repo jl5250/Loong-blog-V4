@@ -29,13 +29,13 @@ export function Header() {
     getCateList().then((res) => {
       const list = (res.data as any)?.result ?? (Array.isArray(res.data) ? res.data : []);
       setCates(list);
-    }).catch(() => {});
+    }).catch(() => { console.warn("[Header] Failed to fetch category list"); });
   }, []);
 
   useEffect(() => {
     getThemeConfig().then((res) => {
       if (res.code === 200 && res.data?.value) setThemeCfg(res.data.value);
-    }).catch(() => {});
+    }).catch(() => { console.warn("[Header] Failed to fetch theme config"); });
   }, []);
 
   // Close mobile menu on route change
