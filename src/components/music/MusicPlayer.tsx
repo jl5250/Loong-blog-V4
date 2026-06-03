@@ -29,6 +29,8 @@ export function MusicPlayer() {
   const [qrKey, setQrKey] = useState("");
   const [loggedIn, setLoggedIn] = useState(!!getStoredCookie());
   const fetchedRef = useRef(false);
+  const tracksRef = useRef<MusicListItem[]>([]);
+  const playIndexRef = useRef<(...args: any[]) => void>(() => {});
 
   // Derived
   const tracks = dailyMusicList;
@@ -44,6 +46,10 @@ export function MusicPlayer() {
       cover: currentMusic.al?.picUrl || "",
     };
   }, [currentMusic, urls]);
+
+  // Sync refs with latest values for use in event callbacks
+  useEffect(() => { tracksRef.current = tracks; }, [tracks]);
+  useEffect(() => { playIndexRef.current = playIndex; }, [playIndex]);
 
   // Initial load: fetch daily songs if store is empty
   useEffect(() => {
@@ -97,9 +103,10 @@ export function MusicPlayer() {
     };
     const onEnded = () => {
       setPlaying(false);
-      const idx = tracks.findIndex((t) => t.id === currentMusic?.id);
+      const tr = tracksRef.current;
+      const idx = tr.findIndex((t) => t.id === currentMusic?.id);
       if (idx >= 0) {
-        setTimeout(() => playIndex((idx + 1) % tracks.length), 500);
+        setTimeout(() => playIndexRef.current((idx + 1) % tr.length), 500);
       }
     };
 
@@ -287,7 +294,7 @@ export function MusicPlayer() {
             <div className="p-5 relative z-1">
               <div className="flex gap-3.5 items-center mb-4">
                 <div className="w-13 h-13 rounded-xl bg-gradient-to-br from-accent to-accent2 flex-shrink-0 overflow-hidden flex items-center justify-center text-2xl">
-                  {track?.cover ? <img src={track.cover} alt="" className="w-full h-full object-cover" /> : "🎵"}
+                  {track?.cover ? <img src={track.cover} alt={track.title} className="w-full h-full object-cover" /> : "🎵"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-bold truncate">{track?.title || "加载中..."}</h4>
