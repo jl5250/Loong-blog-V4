@@ -38,7 +38,7 @@ export default async function ResumePage() {
           <div className="border border-border rounded-2xl p-8 bg-bg-surface mb-8 text-center">
             {personalInfo.avatar && (
               <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden border-2 border-border">
-                <img src={personalInfo.avatar} alt="" className="w-full h-full object-cover" />
+                <img src={personalInfo.avatar} alt="个人头像" className="w-full h-full object-cover" />
               </div>
             )}
             <h2 className="font-serif font-bold text-2xl">{personalInfo.name}</h2>

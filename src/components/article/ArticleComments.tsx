@@ -250,7 +250,7 @@ function CommentItem({
         <div className="flex gap-3">
           <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-accent/30 to-accent2/30">
             {comment.avatar ? (
-              <img src={comment.avatar} alt="" className="w-full h-full object-cover" />
+              <img src={comment.avatar} alt={`${comment.name} 的头像`} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-xs font-bold text-text-muted">
                 {comment.name?.[0] ?? "?"}
@@ -304,7 +304,7 @@ function CommentItem({
               <div className="flex gap-3">
                 <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-accent2/30 to-accent/30">
                   {reply.avatar ? (
-                    <img src={reply.avatar} alt="" className="w-full h-full object-cover" />
+                    <img src={reply.avatar} alt={`${reply.name} 的头像`} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-[.6rem] font-bold text-text-muted">
                       {reply.name?.[0] ?? "?"}
