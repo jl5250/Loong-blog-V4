@@ -60,16 +60,23 @@ function TOCSidebar() {
     <aside className={`hidden xl:block fixed left-8 top-32 w-56 text-sm z-40 max-h-[60vh] overflow-y-auto transition-opacity duration-500 ${
       visible ? "opacity-100" : "opacity-0 pointer-events-none"
     }`}>
+      <style>{`.article-body h2, .article-body h3 { scroll-margin-top: 80px; }`}</style>
       <h4 className="font-serif font-bold text-xs text-text-muted mb-3 tracking-wider uppercase">目录</h4>
       <nav className="space-y-1.5">
         {headingsRef.current.map((h, i) => (
-          <a key={i} href={`#${h.id}`}
-            className={`block transition-colors duration-300 border-l-2 py-1 text-xs ${
+          <button key={i} onClick={() => {
+            const el = document.getElementById(h.id);
+            if (el) {
+              const top = el.getBoundingClientRect().top + window.scrollY - 80;
+              window.scrollTo({ top, behavior: "smooth" });
+            }
+          }}
+            className={`block w-full text-left transition-colors duration-300 border-l-2 py-1 text-xs bg-transparent cursor-pointer ${
               activeId === h.id ? "border-accent text-accent" : "border-border text-text-muted/60 hover:text-text-body hover:border-text-muted"
             } ${h.level === 3 ? "pl-5" : "pl-3"}`}
           >
             {h.text}
-          </a>
+          </button>
         ))}
       </nav>
     </aside>
