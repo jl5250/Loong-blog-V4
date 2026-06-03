@@ -6,18 +6,16 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
 
-  /* Image optimization — allow backend API images */
+  /* Image domains — used by next/image if adopted */
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**.thrivex.**",
-      },
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: "8080",
-      },
+      { protocol: "https", hostname: "bu.dusays.com" },
+      { protocol: "https", hostname: "q1.qlogo.cn" },
+      { protocol: "https", hostname: "q.qlogo.cn" },
+      { protocol: "https", hostname: "bucket.loongai.fun" },
+      { protocol: "https", hostname: "res.liuyuyang.net" },
+      { protocol: "https", hostname: "**.thrivex.**" },
+      { protocol: "http", hostname: "localhost", port: "8080" },
     ],
   },
 
