@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useLenis } from "@/components/scroll/LenisScrollProvider";
 
 export function FAB() {
+  const pathname = usePathname();
+  if (pathname === "/xue") return null;
+
   const [visible, setVisible] = useState(false);
   const lenis = useLenis();
 

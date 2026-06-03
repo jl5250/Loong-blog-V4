@@ -1,10 +1,13 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
-/**
- * Approximate site start date (from web_config create_time: 1547568000000 = 2019-01-15)
- */
-function getRunTime() {
-  const start = new Date(1547568000000);
+const API = process.env.NEXT_PUBLIC_PROJECT_API || "http://localhost:9003/api";
+
+function calcRunTime(startTs: number) {
+  const start = new Date(startTs);
   const now = new Date();
   const diff = now.getTime() - start.getTime();
   const days = Math.floor(diff / 86400000);
@@ -15,7 +18,21 @@ function getRunTime() {
 }
 
 export function Footer() {
-  const rt = getRunTime();
+  const pathname = usePathname();
+  // xue 页面是沉浸式全屏体验，有自己的页脚
+  if (pathname === "/xue") return null;
+
+  const [rt, setRt] = useState({ years: 0, months: 0, days: 0 });
+
+  useEffect(() => {
+    fetch(`${API}/web_config/name/web`)
+      .then((r) => r.json())
+      .then((d) => {
+        const ts = d?.data?.value?.create_time;
+        if (ts) setRt(calcRunTime(Number(ts)));
+      })
+      .catch(() => setRt(calcRunTime(Date.now() - 365 * 86400000)));
+  }, []);
 
   return (
     <footer className="relative z-31 border-t border-border text-center pt-8 pb-24 px-4 max-md:pb-20">
