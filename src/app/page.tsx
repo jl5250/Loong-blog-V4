@@ -65,7 +65,7 @@ export default async function Home() {
           <InkParticles />
 
           <h1 className="font-calligraphy text-[clamp(4rem,13vw,10rem)] leading-[1] mb-3 animate-fade-reveal text-shadow-glow" style={{ animationDelay: "0.3s" }}>
-            墨·<span className="text-accent">賽</span>博
+            墨·<span className="text-accent">Loong</span>
           </h1>
           <p className="font-sans font-extralight text-[clamp(.8rem,1.3vw,1rem)] text-text-muted tracking-[.5em] uppercase animate-fade-reveal" style={{ animationDelay: "1s" }}>
             INK CYBER — LITERATI IN THE MACHINE AGE

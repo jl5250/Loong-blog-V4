@@ -1,9 +1,6 @@
-# 墨·赛博 Ink Cyber
+# Loong·Blog
 
 基于开源项目 [ThriveX](https://github.com/LiuYuYang01/ThriveX-Admin) 二次开发的个人品牌博客。
-
-> **墨·赛博 (Ink Cyber)** — 将中国传统水墨意境与赛博朋克科技视觉融合的设计语言。  
-> 用墨色的流动性平衡科技的冷硬感，让博客既有人文温度又有现代感。
 
 ✅ **项目迁移完成** — 基于 ThriveX v3 重构至 Next.js 16 + React 19 + Tailwind v4，保留全部核心功能，增强视觉设计、性能与开发者体验。
 
@@ -30,7 +27,7 @@
 
 ### 技术升级
 
-| 项目 | ThriveX v3 | Ink Cyber (本分支) |
+| 项目 | ThriveX v3 | Loong·Blog (本分支) |
 |------|-----------|-------------------|
 | Next.js | 15 | **16.2.6** |
 | React | 18 | **19.2.4** |
@@ -62,7 +59,7 @@
 
 ### 设计体系
 
-- **墨·赛博** 设计语言贯穿全站：墨水粒子动画、书法字体标题、印章/水墨装饰元素
+- 设计语言贯穿全站：墨水粒子动画、书法字体标题、印章/水墨装饰元素
 - 自托盘中日韩字体子集（~60KB 每个），零外部字体请求
 - 统一的暗色/亮色主题，无缝切换
 
@@ -196,7 +193,7 @@ Jun 2-3: 3 commits (solo), 15.9k LOC, 100% feat. Streak: 2d
 
 | 指标 | 数值 |
 |--------|-------|
-| 功能交付 | 2 个（Ink Cyber 博客 + 评论/搜索/移动端适配） |
+| 功能交付 | 2 个（Loong·Blog + 评论/搜索/移动端适配） |
 | 提交次数 | 3 |
 | 贡献者 | 1 |
 | 原始代码：新增 | 15,887 行 |
@@ -208,7 +205,7 @@ Jun 2-3: 3 commits (solo), 15.9k LOC, 100% feat. Streak: 2d
 ### 提交记录
 
 1. `49297f6` — 2026-06-02 — Initial commit from Create Next App
-2. `f24427e` — 2026-06-03 — feat: complete Ink Cyber blog with all pages and fixes（220 文件，8,009 行）
+2. `f24427e` — 2026-06-03 — feat: complete Loong·Blog with all pages and fixes（220 文件，8,009 行）
 3. `ce48429` — 2026-06-03 — feat: comments, mobile nav, image viewer, search, and responsive polish（29 文件，909 行）
 
 ### 做得好的地方

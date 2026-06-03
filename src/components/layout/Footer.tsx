@@ -19,26 +19,56 @@ function calcRunTime(startTs: number) {
 
 export function Footer() {
   const pathname = usePathname();
-  // xue 页面是沉浸式全屏体验，有自己的页脚
   if (pathname === "/xue") return null;
 
   const [rt, setRt] = useState({ years: 0, months: 0, days: 0 });
+  const [footerText, setFooterText] = useState("");
+  const [displayed, setDisplayed] = useState("");
+  const [typingDone, setTypingDone] = useState(false);
 
+  // Fetch data
   useEffect(() => {
     fetch(`${API}/web_config/name/web`)
       .then((r) => r.json())
       .then((d) => {
         const ts = d?.data?.value?.create_time;
         if (ts) setRt(calcRunTime(Number(ts)));
+        const ft = d?.data?.value?.footer?.trim();
+        if (ft) setFooterText(ft);
+        else setFooterText("吾生也有涯，而知也无涯");
       })
-      .catch(() => setRt(calcRunTime(Date.now() - 365 * 86400000)));
+      .catch(() => {
+        setRt(calcRunTime(Date.now() - 365 * 86400000));
+        setFooterText("吾生也有涯，而知也无涯");
+      });
   }, []);
+
+  // Typewriter effect
+  useEffect(() => {
+    if (!footerText) return;
+    setTypingDone(false);
+    setDisplayed("");
+    let i = 0;
+    const timer = setInterval(() => {
+      i++;
+      setDisplayed(footerText.slice(0, i));
+      if (i >= footerText.length) {
+        clearInterval(timer);
+        setTypingDone(true);
+      }
+    }, 80);
+    return () => clearInterval(timer);
+  }, [footerText]);
 
   return (
     <footer className="relative z-31 border-t border-border text-center pt-8 pb-24 px-4 max-md:pb-20">
-      <p className="font-calligraphy text-lg text-text-muted/30 mb-5">
-        天地一逆旅，同悲万古尘
+      {/* Typewriter quote */}
+      <p className={`font-calligraphy text-lg mb-5 min-h-[2rem] ${typingDone ? "text-text-muted/30 animate-fade-reveal" : "text-text-muted/30"}`}
+        style={{ animationDelay: typingDone ? "0.3s" : "0s" }}>
+        {displayed}
+        {!typingDone && <span className="animate-pulse ml-0.5 text-text-muted/50">|</span>}
       </p>
+
       <div className="flex justify-center gap-x-5 gap-y-2 flex-wrap mb-3 max-w-md mx-auto">
         {[
           { label: "首页", href: "/" },

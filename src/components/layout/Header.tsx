@@ -95,12 +95,12 @@ export function Header() {
           <Link href="/" className="flex items-center shrink-0">
             {themeCfg ? (
               <img
-                src={theme === "dark" ? themeCfg.dark_logo : (scrolled ? themeCfg.light_logo : themeCfg.dark_logo)}
+                src={theme === "dark" ? themeCfg.dark_logo : themeCfg.light_logo}
                 alt="Logo"
                 className="h-10 w-auto hover:scale-90 transition-transform"
               />
             ) : (
-              <span className="font-calligraphy text-xl text-text-body hover:text-accent transition-colors">墨·賽博</span>
+              <span className="font-calligraphy text-xl hover:text-accent transition-colors" style={{ color: theme === "dark" ? "#e8e4de" : "#2c1810" }}>Loong·Blog</span>
             )}
           </Link>
         </div>

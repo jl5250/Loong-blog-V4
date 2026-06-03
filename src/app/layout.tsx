@@ -26,16 +26,16 @@ const notoSerifSC = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "墨·赛博 | ThriveX",
-    template: "%s | 墨·赛博",
+    default: "Loong·Blog | ThriveX",
+    template: "%s | Loong·Blog",
   },
   description:
-    "墨·赛博 (Ink Cyber) — 将中国传统水墨意境与赛博科技融合的个人博客",
+    "Loong·Blog — 业余前端的技术博客与生活记录",
   keywords: ["个人博客", "设计", "技术", "前端", "Next.js"],
   openGraph: {
     type: "website",
     locale: "zh_CN",
-    siteName: "墨·赛博",
+    siteName: "Loong·Blog",
   },
 };
 

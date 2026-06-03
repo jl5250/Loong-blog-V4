@@ -60,7 +60,7 @@ export function LenisScrollProvider({ children }: LenisScrollProviderProps) {
 
     if (process.env.NODE_ENV === "development") {
       setTimeout(() => {
-        console.log("[InkCyber] Lenis initialized ✓");
+        console.log("[LoongBlog] Lenis initialized ✓");
       }, 1000);
     }
 
