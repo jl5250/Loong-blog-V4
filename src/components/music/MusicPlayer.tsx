@@ -47,9 +47,8 @@ export function MusicPlayer() {
     };
   }, [currentMusic, urls]);
 
-  // Sync refs with latest values for use in event callbacks
+  // Keep tracksRef in sync for audio event callbacks
   useEffect(() => { tracksRef.current = tracks; }, [tracks]);
-  useEffect(() => { playIndexRef.current = playIndex; }, [playIndex]);
 
   // Initial load: fetch daily songs if store is empty
   useEffect(() => {
@@ -139,6 +138,7 @@ export function MusicPlayer() {
     },
     [tracks, changeCurrentMusic, changeCurrentTimeStore, changeDurationStore]
   );
+  useEffect(() => { playIndexRef.current = playIndex; }, [playIndex]);
 
   const togglePlay = useCallback(() => {
     const a = audioRef.current;

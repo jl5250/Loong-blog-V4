@@ -22,14 +22,18 @@ export function Footer() {
       <p className="font-calligraphy text-lg text-text-muted/30 mb-5">
         天地一逆旅，同悲万古尘
       </p>
-      <div className="flex justify-center gap-4 flex-wrap mb-3">
+      <div className="flex justify-center gap-x-5 gap-y-2 flex-wrap mb-3 max-w-md mx-auto">
         {[
           { label: "首页", href: "/" },
           { label: "文章", href: "/cate/1" },
+          { label: "数据", href: "/data" },
+          { label: "说说", href: "/record" },
           { label: "标签", href: "/tags" },
-          { label: "关于", href: "/my" },
+          { label: "设备", href: "/equipment" },
           { label: "足迹", href: "/footprint" },
+          { label: "留言墙", href: "/wall/all" },
           { label: "友链", href: "/friend" },
+          { label: "关于", href: "/my" },
         ].map((l) => (
           <Link
             key={l.label}
