@@ -43,7 +43,7 @@ export function MusicPlayer() {
       title: currentMusic.name || "加载中...",
       artist: currentMusic.ar?.map((a) => a.name).join(", ") || "未知",
       url: urls[currentMusic.id] || "",
-      cover: currentMusic.al?.picUrl || "",
+      cover: (currentMusic.al?.picUrl || "").replace(/^http:\/\//i, "https://"),
     };
   }, [currentMusic, urls]);
 
@@ -74,7 +74,7 @@ export function MusicPlayer() {
     if (!id || currentMusic?.initFlag) return;
     if (!urls[id]) {
       getSongUrl(id).then((url) => {
-        if (url) setUrls((prev) => ({ ...prev, [id]: url }));
+        if (url) setUrls((prev) => ({ ...prev, [id]: url.replace(/^http:\/\//i, "https://") }));
       });
     }
   }, [currentMusic?.id]);
