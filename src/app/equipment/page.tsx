@@ -1,5 +1,7 @@
 import { getPageConfig } from "@/api/config";
 
+export const dynamic = "force-dynamic";
+
 interface EquipmentItem {
   name: string;
   description: string;

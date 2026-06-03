@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getLinkList, getLinkTypeList } from "@/api/web";
 import { getWebInfo } from "@/api/config";
+
+export const dynamic = "force-dynamic";
 import { getAuthorInfo } from "@/api/user";
 import { FriendClient } from "./FriendClient";
 
