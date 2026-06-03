@@ -12,6 +12,8 @@ import { getTagList } from "@/api/tag";
 import { getCateList } from "@/api/cate";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   // Fetch data
   const [swiperRes, themeRes, articlesRes, hotRes, recordsRes, commentsRes, tagsRes, catesRes] = await Promise.allSettled([
