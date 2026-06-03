@@ -3,7 +3,9 @@
  * Supports QR login and anonymous access
  */
 
-const BASE = process.env.NEXT_PUBLIC_MUSIC_API || "http://localhost:4000";
+const BASE = typeof window !== "undefined"
+  ? "/api/music"
+  : (process.env.NEXT_PUBLIC_MUSIC_API || "http://localhost:4000");
 
 export interface MusicTrack {
   id: number;
