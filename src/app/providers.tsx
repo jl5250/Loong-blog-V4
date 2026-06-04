@@ -3,6 +3,7 @@
 import { useEffect, type ReactNode } from "react";
 import { ThemeProvider } from "@/lib/theme";
 import { LenisScrollProvider } from "@/components/scroll/LenisScrollProvider";
+import { NavigationProgress } from "@/components/ui/NavigationProgress";
 
 export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -26,6 +27,7 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <ThemeProvider>
+      <NavigationProgress />
       <LenisScrollProvider>{children}</LenisScrollProvider>
     </ThemeProvider>
   );
