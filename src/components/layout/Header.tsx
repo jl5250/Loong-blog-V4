@@ -25,8 +25,8 @@ export function Header() {
     const threshold = typeof window !== "undefined" ? window.innerHeight * 0.2 : 150;
     if (lenis) {
       const onScroll = (scroll: number) => setScrolled(scroll > threshold);
-      lenis.on("scroll", onScroll);
-      return () => lenis.off("scroll", onScroll);
+      lenis.onScroll(onScroll);
+      return () => lenis.offScroll(onScroll);
     }
     const onScroll = () => setScrolled(window.scrollY > threshold);
     onScroll();

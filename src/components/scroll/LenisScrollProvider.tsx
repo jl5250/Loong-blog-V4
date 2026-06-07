@@ -18,6 +18,8 @@ interface LenisContextValue {
   stop: () => void;
   start: () => void;
   scrollTo: (target: number, immediate?: boolean) => void;
+  onScroll: (cb: (scroll: number) => void) => void;
+  offScroll: (cb: (scroll: number) => void) => void;
 }
 
 const LenisCtx = createContext<LenisContextValue | null>(null);
@@ -42,11 +44,26 @@ export function LenisScrollProvider({ children }: LenisScrollProviderProps) {
     });
     lenisRef.current = lenis;
 
+    // WeakMap-based scroll listener forwarding
+    const scrollListeners = new WeakMap<Function, Function>();
+
     setLenisApi({
       stop: () => lenis.stop(),
       start: () => lenis.start(),
       scrollTo: (target: number, immediate = false) => {
         lenis.scrollTo(target, { immediate, lock: true });
+      },
+      onScroll: (cb: (scroll: number) => void) => {
+        const wrapped = (data: { scroll: number }) => cb(data.scroll);
+        scrollListeners.set(cb, wrapped);
+        lenis.on("scroll", wrapped as any);
+      },
+      offScroll: (cb: (scroll: number) => void) => {
+        const wrapped = scrollListeners.get(cb);
+        if (wrapped) {
+          lenis.off("scroll", wrapped as any);
+          scrollListeners.delete(cb);
+        }
       },
     });
 

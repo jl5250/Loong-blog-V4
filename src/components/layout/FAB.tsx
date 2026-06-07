@@ -11,11 +11,10 @@ export function FAB() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Lenis on desktop uses transform, not window.scrollY
     if (lenis) {
       const onScroll = (scroll: number) => setVisible(scroll > 500);
-      lenis.on("scroll", onScroll);
-      return () => lenis.off("scroll", onScroll);
+      lenis.onScroll(onScroll);
+      return () => lenis.offScroll(onScroll);
     }
     // Fallback for mobile / no-Lenis mode
     const onScroll = () => setVisible(window.scrollY > 500);
