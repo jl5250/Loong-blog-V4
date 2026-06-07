@@ -3,9 +3,9 @@ export interface Cate {
   name: string;
   mark: string;
   url: string;
-  icon: string;
   level: number;
   type: "cate" | "nav";
+  isHide?: boolean;
   order: number;
   children: Cate[];
 }

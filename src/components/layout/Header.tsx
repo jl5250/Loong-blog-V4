@@ -50,18 +50,26 @@ export function Header() {
   // Close mobile menu on route change
   useEffect(() => { setMobileMenuOpen(false); }, [pathname]);
 
-  // Hierarchy: level-0 = top nav, level === parent.id = dropdown children
-  const topCates = cates.filter((c) => c.level === 0);
-  const getChildren = (parentId: number) =>
-    cates.filter((c) => c.level === parentId);
+  // API returns tree structure: top-level items with nested children
+  const topCates = cates.filter((c) => !c.isHide);
 
-  // Flatten nav items for mobile: all type="nav" items, dedup by url
+  // Flatten tree for mobile: recursively collect all nav items
+  const flattenNav = (items: Cate[]): { name: string; url: string }[] => {
+    const result: { name: string; url: string }[] = [];
+    for (const c of items) {
+      if (c.isHide) continue;
+      if (c.type === "nav" && c.url && c.url !== "#") {
+        result.push({ name: c.name, url: c.url || "/" });
+      }
+      if (c.children?.length) {
+        result.push(...flattenNav(c.children));
+      }
+    }
+    return result;
+  };
   const seenUrls = new Set<string>();
-  const navItems = cates
-    .filter((c) => c.type === "nav" && c.url && c.url !== "#")
-    .filter((c) => { if (seenUrls.has(c.url!)) return false; seenUrls.add(c.url!); return true; })
-    .map((c) => ({ name: c.name, url: c.url || "/" }));
-  // Home always first
+  const navItems = flattenNav(cates)
+    .filter((n) => { if (seenUrls.has(n.url)) return false; seenUrls.add(n.url); return true; });
   const mobileItems = [{ name: "首页", url: "/" }, ...navItems.filter((n) => n.url !== "/")];
 
   const isCateActive = (mark: string, cateId?: number, url?: string) => {
@@ -138,7 +146,7 @@ export function Header() {
             {topCates.map((c) => {
               const isNav = c.type === "nav";
               const linkHref = isNav ? (c.url || "#") : `/cate/${c.id}`;
-              const children = getChildren(c.id!);
+              const children = (c.children ?? []).filter((ch) => !ch.isHide);
               if (children.length > 0) {
                 return (
                   <div key={c.id} className="relative" onMouseEnter={() => setOpenDropdown(c.id!)} onMouseLeave={() => setOpenDropdown(null)}>
