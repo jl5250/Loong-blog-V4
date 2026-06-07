@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
 import type { Components } from "react-markdown";
+import { ImageViewer } from "@/components/ui/ImageViewer";
 
 const VIDEO_EXTS = [".mp4", ".webm", ".mov", ".avi", ".mkv"];
 
@@ -48,56 +49,81 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
   );
 }
 
-const components: Partial<Components> = {
-  h2: ({ children, ...p }) => {
-    const id = String(children).replace(/\s+/g, "-").toLowerCase();
-    return <h2 id={id} className="font-serif font-bold text-2xl mt-10 mb-4 pb-2 border-b border-border" {...p}>{children}</h2>;
-  },
-  h3: ({ children, ...p }) => {
-    const id = String(children).replace(/\s+/g, "-").toLowerCase();
-    return <h3 id={id} className="font-serif font-bold text-xl mt-8 mb-3" {...p}>{children}</h3>;
-  },
-  p: ({ children, ...p }) => <p className="mb-4 leading-[1.9] text-justify text-base md:text-lg" {...p}>{children}</p>,
-
-  a: ({ children, href, ...p }) => {
-    const h = typeof href === "string" ? href : undefined;
-    if (h && isVideoUrl(h)) return <div className="my-6 rounded-xl overflow-hidden border border-border"><video controls className="w-full max-h-[500px]" preload="metadata"><source src={h} /></video></div>;
-    if (h && getYoutubeId(h)) return <div className="my-6 aspect-video rounded-xl overflow-hidden border border-border"><iframe src={`https://www.youtube.com/embed/${getYoutubeId(h)}`} className="w-full h-full" allowFullScreen title="YouTube" /></div>;
-    if (h && getBilibiliId(h)) return <div className="my-6 aspect-video rounded-xl overflow-hidden border border-border"><iframe src={`https://player.bilibili.com/player.html?bvid=${getBilibiliId(h)}`} className="w-full h-full" allowFullScreen title="Bilibili" /></div>;
-    return <a href={h} target="_blank" rel="noopener noreferrer" className="text-accent2 underline underline-offset-2 hover:text-accent transition-colors" {...p}>{children}</a>;
-  },
-
-  blockquote: ({ children, ...p }) => <blockquote className="border-l-3 border-accent pl-5 py-2 my-6 text-text-muted italic bg-ink-texture rounded-r-lg" {...p}>{children}</blockquote>,
-
-  code: ({ children, className, ...p }) => {
-    const m = /language-(\w+)/.exec(className || "");
-    if (!m) return <code className="px-1.5 py-0.5 rounded bg-bg-card text-accent text-sm font-mono" {...p}>{children}</code>;
-    return <CodeBlock language={m[1]} value={String(children).replace(/\n$/, "")} />;
-  },
-  pre: ({ children }) => <>{children}</>,
-
-  ul: ({ children, ...p }) => <ul className="list-disc pl-6 mb-4 space-y-1.5" {...p}>{children}</ul>,
-  ol: ({ children, ...p }) => <ol className="list-decimal pl-6 mb-4 space-y-1.5" {...p}>{children}</ol>,
-  li: ({ children, ...p }) => <li className="text-base md:text-lg leading-relaxed" {...p}>{children}</li>,
-
-  img: ({ src, alt, ...p }) => {
-    const s = typeof src === "string" ? src : undefined;
-    if (s && isVideoUrl(s)) return <div className="my-6 rounded-xl overflow-hidden border border-border"><video controls className="w-full max-h-[500px]" preload="metadata"><source src={s} /></video></div>;
-    return s ? <a href={s} target="_blank" rel="noopener noreferrer"><img src={s} alt={alt || ""} className="rounded-xl my-6 max-w-full h-auto mx-auto cursor-zoom-in hover:opacity-90 transition-opacity" loading="lazy" {...p} /></a> : null;
-  },
-
-  hr: () => <hr className="my-8 border-border" />,
-  table: ({ children, ...p }) => <div className="overflow-x-auto my-6"><table className="w-full border-collapse border border-border text-sm" {...p}>{children}</table></div>,
-  th: ({ children, ...p }) => <th className="border border-border px-3 py-2 bg-bg-card font-bold text-left" {...p}>{children}</th>,
-  td: ({ children, ...p }) => <td className="border border-border px-3 py-2" {...p}>{children}</td>,
-};
-
 export function MarkdownRenderer({ content }: { content: string }) {
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+
+  const handleImgClick = useCallback((e: React.MouseEvent<HTMLImageElement>) => {
+    // If img is inside an <a> tag, don't open lightbox
+    if ((e.target as HTMLElement).closest("a")) return;
+    const src = (e.target as HTMLImageElement).src;
+    if (!src) return;
+    setImages([src]);
+    setViewerIndex(0);
+  }, []);
+
+  const components: Partial<Components> = useMemo(() => ({
+    h2: ({ children, ...p }) => {
+      const id = String(children).replace(/\s+/g, "-").toLowerCase();
+      return <h2 id={id} className="font-serif font-bold text-2xl mt-10 mb-4 pb-2 border-b border-border" {...p}>{children}</h2>;
+    },
+    h3: ({ children, ...p }) => {
+      const id = String(children).replace(/\s+/g, "-").toLowerCase();
+      return <h3 id={id} className="font-serif font-bold text-xl mt-8 mb-3" {...p}>{children}</h3>;
+    },
+    p: ({ children, ...p }) => <p className="mb-4 leading-[1.9] text-justify text-base md:text-lg" {...p}>{children}</p>,
+
+    a: ({ children, href, ...p }) => {
+      const h = typeof href === "string" ? href : undefined;
+      if (h && isVideoUrl(h)) return <div className="my-6 rounded-xl overflow-hidden border border-border"><video controls className="w-full max-h-[500px]" preload="metadata"><source src={h} /></video></div>;
+      if (h && getYoutubeId(h)) return <div className="my-6 aspect-video rounded-xl overflow-hidden border border-border"><iframe src={`https://www.youtube.com/embed/${getYoutubeId(h)}`} className="w-full h-full" allowFullScreen title="YouTube" /></div>;
+      if (h && getBilibiliId(h)) return <div className="my-6 aspect-video rounded-xl overflow-hidden border border-border"><iframe src={`https://player.bilibili.com/player.html?bvid=${getBilibiliId(h)}`} className="w-full h-full" allowFullScreen title="Bilibili" /></div>;
+      return <a href={h} target="_blank" rel="noopener noreferrer" className="text-accent2 underline underline-offset-2 hover:text-accent transition-colors" {...p}>{children}</a>;
+    },
+
+    blockquote: ({ children, ...p }) => <blockquote className="border-l-3 border-accent pl-5 py-2 my-6 text-text-muted italic bg-ink-texture rounded-r-lg" {...p}>{children}</blockquote>,
+
+    code: ({ children, className, ...p }) => {
+      const m = /language-(\w+)/.exec(className || "");
+      if (!m) return <code className="px-1.5 py-0.5 rounded bg-bg-card text-accent text-sm font-mono" {...p}>{children}</code>;
+      return <CodeBlock language={m[1]} value={String(children).replace(/\n$/, "")} />;
+    },
+    pre: ({ children }) => <>{children}</>,
+
+    ul: ({ children, ...p }) => <ul className="list-disc pl-6 mb-4 space-y-1.5" {...p}>{children}</ul>,
+    ol: ({ children, ...p }) => <ol className="list-decimal pl-6 mb-4 space-y-1.5" {...p}>{children}</ol>,
+    li: ({ children, ...p }) => <li className="text-base md:text-lg leading-relaxed" {...p}>{children}</li>,
+
+    img: ({ src, alt, ...p }) => {
+      const s = typeof src === "string" ? src : undefined;
+      if (!s) return null;
+      if (isVideoUrl(s)) return <div className="my-6 rounded-xl overflow-hidden border border-border"><video controls className="w-full max-h-[500px]" preload="metadata"><source src={s} /></video></div>;
+      return (
+        <img
+          src={s}
+          alt={alt || ""}
+          className="rounded-xl my-6 max-w-full h-auto mx-auto cursor-zoom-in hover:opacity-90 transition-opacity"
+          loading="lazy"
+          onClick={handleImgClick}
+          {...p}
+        />
+      );
+    },
+
+    hr: () => <hr className="my-8 border-border" />,
+    table: ({ children, ...p }) => <div className="overflow-x-auto my-6"><table className="w-full border-collapse border border-border text-sm" {...p}>{children}</table></div>,
+    th: ({ children, ...p }) => <th className="border border-border px-3 py-2 bg-bg-card font-bold text-left" {...p}>{children}</th>,
+    td: ({ children, ...p }) => <td className="border border-border px-3 py-2" {...p}>{children}</td>,
+  }), [handleImgClick]);
+
   return (
     <div className="article-body">
       <ReactMarkdown components={components} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
         {content}
       </ReactMarkdown>
+      {viewerIndex !== null && images.length > 0 && (
+        <ImageViewer images={images} index={viewerIndex} onClose={() => setViewerIndex(null)} />
+      )}
     </div>
   );
 }
