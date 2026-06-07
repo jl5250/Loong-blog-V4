@@ -27,12 +27,15 @@ test.describe("scroll ownership", () => {
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(500);
 
-    // Scroll far enough for FAB to appear (threshold is 500px)
+    // Scroll down and wait for scroll event to propagate
     await page.evaluate(() => window.scrollTo(0, 1200));
-    await page.waitForTimeout(500);
-    await expect(page.getByRole("button", { name: /回到顶部/i })).toBeVisible();
+    await page.waitForFunction(() => window.scrollY > 500, { timeout: 5000 });
+    await page.waitForTimeout(300);
 
-    await page.getByRole("button", { name: /回到顶部/i }).click();
+    const fab = page.getByRole("button", { name: /回到顶部/i });
+    await expect(fab).toBeVisible({ timeout: 5000 });
+
+    await fab.click();
     await page.waitForTimeout(600);
 
     const top = await page.evaluate(() => window.scrollY);
