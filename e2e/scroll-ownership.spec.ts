@@ -14,4 +14,17 @@ test.describe("scroll ownership", () => {
     const after = await page.evaluate(() => window.scrollY);
     expect(after).toBeGreaterThanOrEqual(before);
   });
+
+  test("article TOC and scroll-to-top remain functional", async ({ page }) => {
+    await page.goto("/article/1");
+
+    await page.mouse.wheel(0, 1600);
+    await expect(page.getByRole("button", { name: /回到顶部/i })).toBeVisible();
+
+    await page.getByRole("button", { name: /回到顶部/i }).click();
+    await page.waitForTimeout(500);
+
+    const top = await page.evaluate(() => window.scrollY);
+    expect(top).toBeLessThan(50);
+  });
 });

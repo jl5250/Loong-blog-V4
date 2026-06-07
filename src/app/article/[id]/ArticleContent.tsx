@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useLenis } from "@/components/scroll/LenisScrollProvider";
+import { scrollDocumentTo } from "@/lib/scroll/scrollTo";
 import type { Article } from "@/types/article";
 import { formatDate } from "@/lib/format";
 import { ArticleComments } from "@/components/article/ArticleComments";
@@ -68,7 +70,7 @@ function TOCSidebar() {
             const el = document.getElementById(h.id);
             if (el) {
               const top = el.getBoundingClientRect().top + window.scrollY - 80;
-              window.scrollTo({ top, behavior: "smooth" });
+              scrollDocumentTo(top, null, false);
             }
           }}
             className={`block w-full text-left transition-colors duration-300 border-l-2 py-1 text-xs bg-transparent cursor-pointer ${
