@@ -52,7 +52,11 @@ export function WallClient({ cateSlug, cateList, initialWalls }: WallClientProps
       if (res.code === 200 && res.data) {
         const result = res.data.result ?? [];
         if (result.length > 0) {
-          setWalls((prev) => [...prev, ...result]);
+          setWalls((prev) => {
+            const existIds = new Set(prev.map((w) => w.id));
+            const fresh = result.filter((w: any) => !existIds.has(w.id));
+            return [...prev, ...fresh];
+          });
           setTotalPages(res.data.pages ?? 1);
           setHasMore(nextPage < (res.data.pages ?? 1));
           currentPageRef.current = nextPage;
