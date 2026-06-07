@@ -6,24 +6,18 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/theme";
 import { getCateList } from "@/api/cate";
 import { getThemeConfig } from "@/api/config";
+import { useDocumentScroll } from "@/lib/scroll/useDocumentScroll";
 import type { Cate } from "@/types/cate";
 import type { ThemeConfig } from "@/types/config";
 
 export function Header() {
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useDocumentScroll((scrollY) => scrollY > window.innerHeight * 0.2);
   const [cates, setCates] = useState<Cate[]>([]);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [themeCfg, setThemeCfg] = useState<ThemeConfig | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.2);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     getCateList().then((res) => {

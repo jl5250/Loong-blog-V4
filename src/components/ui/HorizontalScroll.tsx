@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { useLenis } from "@/components/scroll/LenisScrollProvider";
 
 interface HorizontalScrollProps {
   children: ReactNode;
@@ -10,7 +9,6 @@ interface HorizontalScrollProps {
 
 export function HorizontalScroll({ children, className = "" }: HorizontalScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const lenis = useLenis();
 
   useEffect(() => {
     const el = ref.current;
@@ -25,30 +23,33 @@ export function HorizontalScroll({ children, className = "" }: HorizontalScrollP
     el.addEventListener("mousedown", onDown);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-    el.addEventListener("mouseleave", () => { down = false; });
 
-    // Use capture phase to intercept wheel before Lenis
+    // Edge-aware wheel: only consume when container can still scroll in that direction
     const onWheel = (e: WheelEvent) => {
-      if (el.scrollWidth > el.clientWidth) {
-        e.preventDefault();
-        lenis?.stop();
-        el.scrollBy({ left: e.deltaY, behavior: "auto" });
-        // Resume Lenis after scroll stops
-        clearTimeout((el as any)._lenisTimer);
-        (el as any)._lenisTimer = setTimeout(() => lenis?.start(), 100);
-      }
+      if (el.scrollWidth <= el.clientWidth) return;
+
+      const atLeft = el.scrollLeft <= 0;
+      const maxLeft = el.scrollWidth - el.clientWidth;
+      const atRight = el.scrollLeft >= maxLeft - 1;
+      const movingLeft = e.deltaY < 0;
+      const movingRight = e.deltaY > 0;
+
+      const canConsume = (movingLeft && !atLeft) || (movingRight && !atRight);
+      if (!canConsume) return;
+
+      e.preventDefault();
+      el.scrollBy({ left: e.deltaY, behavior: "auto" });
     };
-    el.addEventListener("wheel", onWheel, { passive: false, capture: true });
+
+    el.addEventListener("wheel", onWheel, { passive: false });
 
     return () => {
       el.removeEventListener("mousedown", onDown);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
-      el.removeEventListener("mouseleave", () => { down = false; });
       el.removeEventListener("wheel", onWheel);
-      clearTimeout((el as any)._lenisTimer);
     };
-  }, [lenis]);
+  }, []);
 
   return (
     <div ref={ref} className={`overflow-x-auto scrollbar-none cursor-grab active:cursor-grabbing select-none ${className}`} style={{ touchAction: "pan-y" }}>

@@ -1,29 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useLenis } from "@/components/scroll/LenisScrollProvider";
+import { useDocumentScroll } from "@/lib/scroll/useDocumentScroll";
+import { scrollDocumentTo } from "@/lib/scroll/scrollTo";
 
 export function FAB() {
   const pathname = usePathname();
   if (pathname === "/xue") return null;
 
-  const [visible, setVisible] = useState(false);
   const lenis = useLenis();
-
-  useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 500);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const visible = useDocumentScroll((scrollY) => scrollY > 500);
 
   const scrollToTop = () => {
-    if (lenis) {
-      lenis.scrollTo(0, true);
-    } else {
-      window.scrollTo(0, 0);
-    }
+    scrollDocumentTo(0, lenis, true);
   };
 
   return (
