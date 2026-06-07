@@ -7,8 +7,6 @@ import { scrollDocumentTo } from "@/lib/scroll/scrollTo";
 
 export function FAB() {
   const pathname = usePathname();
-  if (pathname === "/xue") return null;
-
   const lenis = useLenis();
   const [visible, setVisible] = useState(false);
 
@@ -25,6 +23,8 @@ export function FAB() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [lenis]);
+
+  if (pathname === "/xue") return null;
 
   const scrollToTop = () => {
     scrollDocumentTo(0, lenis, true);
