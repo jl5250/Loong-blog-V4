@@ -17,8 +17,11 @@ test.describe("scroll ownership", () => {
 
   test("article TOC and scroll-to-top remain functional", async ({ page }) => {
     await page.goto("/article/1");
+    await page.waitForTimeout(500);
 
-    await page.mouse.wheel(0, 1600);
+    // Scroll far enough for FAB to appear (threshold is 500px)
+    await page.evaluate(() => window.scrollTo(0, 1200));
+    await page.waitForTimeout(300);
     await expect(page.getByRole("button", { name: /回到顶部/i })).toBeVisible();
 
     await page.getByRole("button", { name: /回到顶部/i }).click();
