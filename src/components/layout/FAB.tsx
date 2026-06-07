@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useLenis } from "@/components/scroll/LenisScrollProvider";
-import { useDocumentScroll } from "@/lib/scroll/useDocumentScroll";
 import { scrollDocumentTo } from "@/lib/scroll/scrollTo";
 
 export function FAB() {
@@ -10,7 +10,21 @@ export function FAB() {
   if (pathname === "/xue") return null;
 
   const lenis = useLenis();
-  const visible = useDocumentScroll((scrollY) => scrollY > 500);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    // Lenis on desktop uses transform, not window.scrollY
+    if (lenis) {
+      const onScroll = (scroll: number) => setVisible(scroll > 500);
+      lenis.on("scroll", onScroll);
+      return () => lenis.off("scroll", onScroll);
+    }
+    // Fallback for mobile / no-Lenis mode
+    const onScroll = () => setVisible(window.scrollY > 500);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [lenis]);
 
   const scrollToTop = () => {
     scrollDocumentTo(0, lenis, true);
