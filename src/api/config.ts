@@ -15,3 +15,7 @@ export const getPageConfig = <T = any>(name: string) =>
 /** Gaode map config from /api/env_config/gaode_map */
 export const getGaodeMapConfig = () =>
   request<{ key_code: string; security_code: string }>("GET", "/env_config/gaode_map");
+
+/** Other config (baidu_token, hcaptcha_key) from /api/web_config/name/other */
+export const getOtherConfig = () =>
+  request<{ id: number; name: string; value: OtherConfig }>("GET", "/web_config/name/other");
