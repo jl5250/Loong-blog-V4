@@ -4,6 +4,8 @@ import { useEffect, type ReactNode } from "react";
 import { ThemeProvider } from "@/lib/theme";
 import { LenisScrollProvider } from "@/components/scroll/LenisScrollProvider";
 import { NavigationProgress } from "@/components/ui/NavigationProgress";
+import { getOtherConfig } from "@/api/config";
+import { injectBaiduAnalytics } from "@/lib/analytics/baidu";
 
 export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -23,6 +25,21 @@ export function Providers({ children }: { children: ReactNode }) {
       mounted = false;
       (Element.prototype as any).releasePointerCapture = orig;
     };
+  }, []);
+
+  // Single bootstrap for Baidu analytics — fetch config once, inject once, silently fail
+  useEffect(() => {
+    let cancelled = false;
+    getOtherConfig()
+      .then((res) => {
+        if (cancelled) return;
+        const token = res.data?.value?.baidu_token ?? "";
+        injectBaiduAnalytics(token);
+      })
+      .catch(() => {
+        // analytics bootstrap must fail silently
+      });
+    return () => { cancelled = true; };
   }, []);
 
   return (

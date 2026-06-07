@@ -14,4 +14,12 @@ test.describe("Baidu analytics bootstrap", () => {
     expect(secondCount).toBeLessThanOrEqual(1);
     expect(secondCount).toBe(firstCount);
   });
+
+  test("does not inject analytics script when token is absent", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForTimeout(500);
+
+    const count = await page.locator('script[data-baidu-analytics="true"]').count();
+    expect(count).toBeLessThanOrEqual(1);
+  });
 });
