@@ -27,4 +27,18 @@ test.describe("scroll ownership", () => {
     const top = await page.evaluate(() => window.scrollY);
     expect(top).toBeLessThan(50);
   });
+
+  test("narrative page does not leak scroll behavior after navigation", async ({ page }) => {
+    await page.goto("/xue");
+    await page.mouse.wheel(0, 800);
+
+    await page.goto("/");
+    await page.waitForTimeout(500);
+
+    const before = await page.evaluate(() => window.scrollY);
+    await page.mouse.wheel(0, 800);
+    const after = await page.evaluate(() => window.scrollY);
+
+    expect(after).toBeGreaterThan(before);
+  });
 });

@@ -47,6 +47,16 @@ const TIMELINE_DATA = [
   { year: "2026", title: "四巡 · 万兽之王震撼登场", desc: "93米宽巨型四面台，5600㎡环形冰屏，1080组灯光。三幕叙事。" },
 ];
 
+// Scroll Policy: This page is a Level 2 narrative page.
+// It uses container-scoped wheel handling, NOT global wheel capture.
+// All listeners/timers/tweens must be torn down on route exit.
+const XUE_SCROLL_POLICY = {
+  level: "level-2",
+  narrative: true,
+  allowGlobalWheelCapture: false,
+  allowLenisLifecycleControl: false,
+} as const;
+
 export default function XuePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const portraitRef = useRef<HTMLDivElement>(null);
@@ -56,7 +66,7 @@ export default function XuePage() {
   const panelIdxRef = useRef(0);
   const ticking = useRef(false);
 
-  // Kill page scroll (html + body); GSAP-driven panel navigation
+  // Level 2 narrative: container-scoped wheel navigation (NOT global capture)
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -64,35 +74,39 @@ export default function XuePage() {
     if (panels.length < 2) return;
 
     const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
       if (ticking.current) return;
-
       const dir = e.deltaY > 0 ? 1 : -1;
       const next = Math.max(0, Math.min(panelIdxRef.current + dir, panels.length - 1));
       if (next === panelIdxRef.current) return;
 
+      e.preventDefault();
       panelIdxRef.current = next;
       ticking.current = true;
 
-      const targetTop = panels[next].offsetTop;
       gsap.to(container, {
-        scrollTop: targetTop,
+        scrollTop: panels[next].offsetTop,
         duration: 0.6,
         ease: "power3.inOut",
         onComplete: () => { ticking.current = false; },
       });
     };
 
-    // Capture phase to intercept wheel before other handlers
-    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
-    return () => window.removeEventListener("wheel", onWheel, { capture: true } as any);
+    container.addEventListener("wheel", onWheel, { passive: false });
+
+    // Cleanup: remove listener + kill any in-progress tween
+    return () => {
+      container.removeEventListener("wheel", onWheel);
+      ticking.current = false;
+      gsap.killTweensOf(container);
+    };
   }, []);
 
-  // 3D portrait mouse follow + sparkles
+  // 3D portrait mouse follow + sparkles — with full teardown on route exit
   useEffect(() => {
     const portrait = portraitRef.current?.querySelector(".portrait-img") as HTMLElement;
     const glow = portraitRef.current?.querySelector(".portrait-glow") as HTMLElement;
+    const sparkles: HTMLDivElement[] = [];
+
     if (portrait) {
       gsap.to(portrait, { y: -8, duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut" });
       const onMove = (e: MouseEvent) => {
@@ -109,14 +123,27 @@ export default function XuePage() {
       const el = portraitRef.current;
       el?.addEventListener("mousemove", onMove);
       el?.addEventListener("mouseleave", onLeave);
+
       // sparkles
       for (let i = 0; i < 20; i++) {
         const s = document.createElement("div");
         s.style.cssText = `position:absolute;width:2px;height:2px;background:#b8860b;border-radius:50%;opacity:0;left:${Math.random() * 100}%;top:${Math.random() * 100}%;pointer-events:none;z-index:2`;
         portrait.appendChild(s);
+        sparkles.push(s);
         gsap.to(s, { opacity: Math.random() * 0.5 + 0.2, scale: Math.random() * 2 + 0.5, duration: 2 + Math.random() * 4, repeat: -1, yoyo: true, delay: Math.random() * 6, ease: "sine.inOut" });
       }
-      return () => { el?.removeEventListener("mousemove", onMove); el?.removeEventListener("mouseleave", onLeave); };
+
+      // Cleanup: remove listeners, kill tweens, remove sparkle DOM nodes
+      return () => {
+        el?.removeEventListener("mousemove", onMove);
+        el?.removeEventListener("mouseleave", onLeave);
+        gsap.killTweensOf(portrait);
+        if (glow) gsap.killTweensOf(glow);
+        sparkles.forEach((s) => {
+          gsap.killTweensOf(s);
+          s.remove();
+        });
+      };
     }
   }, []);
 
