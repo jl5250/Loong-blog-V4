@@ -1,9 +1,9 @@
 import { request } from "./request";
 import type { Web, WebType } from "@/types/web";
 
-/** 获取网站列表 POST /api/link/list */
+/** 获取网站列表 */
 export const getLinkList = () =>
-  request<Web[]>("POST", "/link/list", { body: {} });
+  request<Web[]>("GET", "/link");
 
 /** 获取网站类型列表 GET /api/link/type */
 export const getLinkTypeList = () =>

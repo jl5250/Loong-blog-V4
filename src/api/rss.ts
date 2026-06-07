@@ -1,4 +1,5 @@
 import { request } from "./request";
+import type { Paginate } from "@/types/response";
 
 export interface RssItem {
   author: string;
@@ -12,4 +13,4 @@ export interface RssItem {
 }
 
 export const getRssList = () =>
-  request<RssItem[]>("GET", "/rss/list");
+  request<Paginate<RssItem[]>>("GET", "/rss");
