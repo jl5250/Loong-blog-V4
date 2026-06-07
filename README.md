@@ -130,10 +130,10 @@ npm install
 
 ### 配置
 
-复制环境变量文件并修改：
+复制环境变量模板并修改：
 
 ```bash
-cp .env.local.example .env.local
+cp .env.example .env.local
 ```
 
 ```env

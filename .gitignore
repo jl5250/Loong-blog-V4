@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (keep secrets local)
 .env
 .env*.local
+.env.development
+.env.production
+.env.test
 
 # vercel
 .vercel
