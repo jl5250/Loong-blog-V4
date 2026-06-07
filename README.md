@@ -1,6 +1,6 @@
 # Loong·Blog
 
-基于开源项目 [ThriveX](https://github.com/LiuYuYang01/ThriveX-Admin) 二次开发的个人品牌博客。
+基于开源项目 [ThriveX](https://github.com/LiuYuYang01/ThriveX-Blog) 二次开发的个人品牌博客。
 
 ✅ **项目迁移完成** — 基于 ThriveX v3 重构至 Next.js 16 + React 19 + Tailwind v4，保留全部核心功能，增强视觉设计、性能与开发者体验。
 
@@ -219,6 +219,40 @@ Jun 2-3: 3 commits (solo), 15.9k LOC, 100% feat. Streak: 2d
 - 测试覆盖率为 0%，需要补充集成测试
 - 提交粒度偏粗，建议按功能模块拆分提交
 - 需要配置 CI 流程
+
+---
+
+## 更新日志
+
+### 2026-06-07
+
+**导航栏适配新后端**
+- Cate 类型移除 `icon` 字段，新增 `isHide` 字段，匹配新数据库 schema
+- Header 下拉菜单改用 `c.children` 树形结构，不再依赖 `level` 扁平匹配
+- 移动端导航新增 `flattenNav()` 递归遍历树形数据
+- 导航项支持 `isHide` 过滤隐藏条目
+
+**API 接口全面迁移**
+- 所有 GET 类接口从 `POST /xxx/list` 迁移到 `GET /xxx`
+- 涉及 swiper、record、comment、tag、footprint、wall、link、rss 共 8 个模块
+- 分页参数统一使用 query params
+
+**页面数据提取修复**
+- 所有页面适配 `{result: [...], total, pages}` 分页响应格式
+- 移除已失效的 `/cate/list` 端点调用，改用 `/cate`（已含 count 字段）
+- tags 页面只显示 `type === "cate"` 的分类项
+- data 页面分类统计从 cate 表 count 字段获取
+
+**滚动修复**
+- 移除 Lenis `scrollTo` 的无效 `lock: true` 参数（导致滚动卡死）
+- LenisContextValue 新增 `scroll` 属性暴露当前滚动位置
+- 文章页 ReadingProgress、TOCSidebar、scroll-to-top 全部改走 Lenis
+- TOC 点击跳转修复 `window.scrollY` 在 Lenis 下始终为 0 的问题
+
+**Markdown 图片增强**
+- 文章内图片点击打开全屏 ImageViewer（复用已有组件）
+- 链接内图片不触发 lightbox，不产生嵌套 `<a>` 标签
+- 修复 `<a>` 嵌套 `<a>` 的 hydration 错误
 
 ---
 
