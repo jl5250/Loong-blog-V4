@@ -20,6 +20,8 @@ interface LenisContextValue {
   scrollTo: (target: number, immediate?: boolean) => void;
   onScroll: (cb: (scroll: number) => void) => void;
   offScroll: (cb: (scroll: number) => void) => void;
+  /** Current scroll position (updated on every Lenis tick). */
+  scroll: number;
 }
 
 const LenisCtx = createContext<LenisContextValue | null>(null);
@@ -46,12 +48,16 @@ export function LenisScrollProvider({ children }: LenisScrollProviderProps) {
 
     // WeakMap-based scroll listener forwarding
     const scrollListeners = new WeakMap<Function, Function>();
+    const scrollPos = { value: 0 };
+
+    // Track current scroll position for sync access
+    lenis.on("scroll", (data: { scroll: number }) => { scrollPos.value = data.scroll; });
 
     setLenisApi({
       stop: () => lenis.stop(),
       start: () => lenis.start(),
       scrollTo: (target: number, immediate = false) => {
-        lenis.scrollTo(target, { immediate, lock: true });
+        lenis.scrollTo(target, { immediate });
       },
       onScroll: (cb: (scroll: number) => void) => {
         const wrapped = (data: { scroll: number }) => cb(data.scroll);
@@ -65,6 +71,7 @@ export function LenisScrollProvider({ children }: LenisScrollProviderProps) {
           scrollListeners.delete(cb);
         }
       },
+      get scroll() { return scrollPos.value; },
     });
 
     /* ---- Lenis ↔ GSAP ScrollTrigger bridge ---- */

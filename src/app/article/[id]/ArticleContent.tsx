@@ -12,15 +12,22 @@ import { MarkdownRenderer } from "@/components/article/MarkdownRenderer";
 /* ───── Reading Progress ───── */
 function ReadingProgress() {
   const [progress, setProgress] = useState(0);
+  const lenis = useLenis();
   useEffect(() => {
-    const onScroll = () => {
-      const scrollTop = window.scrollY;
+    const calc = (scrollTop: number) => {
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       setProgress(docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0);
     };
+    if (lenis) {
+      const onScroll = (scroll: number) => calc(scroll);
+      lenis.onScroll(onScroll);
+      return () => lenis.offScroll(onScroll);
+    }
+    const onScroll = () => calc(window.scrollY);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [lenis]);
   return (
     <div className="fixed left-0 top-0 h-1 z-[60] w-full pointer-events-none">
       <div className="h-full bg-gradient-to-r from-accent via-accent2 to-accent transition-all duration-150 ease-out" style={{ width: `${progress * 100}%` }} />
@@ -33,6 +40,7 @@ function TOCSidebar() {
   const [activeId, setActiveId] = useState("");
   const [visible, setVisible] = useState(false);
   const headingsRef = useRef<{ id: string; text: string; level: number }[]>([]);
+  const lenis = useLenis();
 
   useEffect(() => {
     const els = document.querySelectorAll<HTMLHeadingElement>(".article-body h2, .article-body h3");
@@ -50,11 +58,17 @@ function TOCSidebar() {
 
   // Show TOC only after scrolling past the hero section
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.8);
+    const threshold = typeof window !== "undefined" ? window.innerHeight * 0.8 : 600;
+    if (lenis) {
+      const onScroll = (scroll: number) => setVisible(scroll > threshold);
+      lenis.onScroll(onScroll);
+      return () => lenis.offScroll(onScroll);
+    }
+    const onScroll = () => setVisible(window.scrollY > threshold);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [lenis]);
 
   if (headingsRef.current.length === 0) return null;
 
@@ -69,8 +83,15 @@ function TOCSidebar() {
           <button key={i} onClick={() => {
             const el = document.getElementById(h.id);
             if (el) {
-              const top = el.getBoundingClientRect().top + window.scrollY - 80;
-              scrollDocumentTo(top, null, false);
+              const rect = el.getBoundingClientRect();
+              if (lenis) {
+                // Lenis uses transform-based scroll; window.scrollY is always 0.
+                // Lenis.scrollTo() expects viewport-relative offset from current position.
+                const offset = rect.top - 80;
+                lenis.scrollTo(lenis.scroll + offset, false);
+              } else {
+                scrollDocumentTo(rect.top + window.scrollY - 80, null, false);
+              }
             }
           }}
             className={`block w-full text-left transition-colors duration-300 border-l-2 py-1 text-xs bg-transparent cursor-pointer ${
@@ -87,6 +108,7 @@ function TOCSidebar() {
 
 /* ───── Article Content ───── */
 export function ArticleContent({ article }: { article: Article }) {
+  const lenis = useLenis();
   // Force scroll to top when entering article
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -94,10 +116,14 @@ export function ArticleContent({ article }: { article: Article }) {
     if (window.history?.scrollRestoration) {
       window.history.scrollRestoration = "manual";
     }
-    window.scrollTo(0, 0);
-    const timer = setTimeout(() => window.scrollTo(0, 0), 50);
-    return () => clearTimeout(timer);
-  }, []);
+    if (lenis) {
+      lenis.scrollTo(0, true);
+    } else {
+      window.scrollTo(0, 0);
+      const timer = setTimeout(() => window.scrollTo(0, 0), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [lenis]);
 
   const coverUrl = article.cover ||
     "https://bu.dusays.com/2023/11/10/654e2da1d80f8.jpg";
