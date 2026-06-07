@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTagList } from "@/api/tag";
-import { getCateArticleCount } from "@/api/cate";
+import { getCateList } from "@/api/cate";
 
 export const revalidate = 300;
 import Link from "next/link";
@@ -10,11 +10,12 @@ export const metadata: Metadata = { title: "标签云" };
 export default async function TagsPage() {
   const [tagRes, cateRes] = await Promise.allSettled([
     getTagList(),
-    getCateArticleCount(),
+    getCateList(),
   ]);
 
-  const tags = tagRes.status === "fulfilled" ? tagRes.value.data ?? [] : [];
-  const cates = cateRes.status === "fulfilled" ? cateRes.value.data ?? [] : [];
+  const tags: any[] = tagRes.status === "fulfilled" ? ((tagRes.value.data as any)?.result ?? (Array.isArray(tagRes.value.data) ? tagRes.value.data : [])) : [];
+  const allCates: any[] = cateRes.status === "fulfilled" ? ((cateRes.value.data as any)?.result ?? (Array.isArray(cateRes.value.data) ? cateRes.value.data : [])) : [];
+  const cates = allCates.filter((c: any) => c.type === "cate");
 
   return (
     <main className="flex-1 pt-28 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">

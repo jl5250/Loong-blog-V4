@@ -16,8 +16,8 @@ export default async function FriendPage() {
     getAuthorInfo(),
   ]);
 
-  const links = listRes.status === "fulfilled" ? (Array.isArray(listRes.value.data) ? listRes.value.data : []) : [];
-  const types = typeRes.status === "fulfilled" ? (Array.isArray(typeRes.value.data) ? typeRes.value.data : []) : [];
+  const links = listRes.status === "fulfilled" ? ((listRes.value.data as any)?.result ?? (Array.isArray(listRes.value.data) ? listRes.value.data : [])) : [];
+  const types = typeRes.status === "fulfilled" ? ((typeRes.value.data as any)?.result ?? (Array.isArray(typeRes.value.data) ? typeRes.value.data : [])) : [];
   const webData = webRes.status === "fulfilled" ? webRes.value.data : null;
   const webInfo = webData && "value" in webData ? (webData as any).value : null;
   const author = authorRes.status === "fulfilled" ? authorRes.value.data : null;

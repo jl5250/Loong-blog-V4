@@ -3,7 +3,7 @@ import { getArticlePaging } from "@/api/article";
 
 export const revalidate = 60;
 import { getTagList } from "@/api/tag";
-import { getCateList, getCateArticleCount } from "@/api/cate";
+import { getCateList } from "@/api/cate";
 import { getLinkList } from "@/api/web";
 import { getLatestComments } from "@/api/comment";
 import Link from "next/link";
@@ -16,7 +16,6 @@ export default async function DataPage() {
     getArticlePaging(1, 100),
     getTagList(),
     getCateList(),
-    getCateArticleCount(),
     getLinkList(),
     getLatestComments(1, 100),
   ]);
@@ -25,16 +24,15 @@ export default async function DataPage() {
   const articles = articleData?.result ?? [];
   const totalArticles = articleData?.total ?? articles.length;
 
-  const tagList = results[1].status === "fulfilled" ? (Array.isArray(results[1].value.data) ? results[1].value.data : []) : [];
+  const tagList = results[1].status === "fulfilled" ? ((results[1].value.data as any)?.result ?? (Array.isArray(results[1].value.data) ? results[1].value.data : [])) : [];
 
   const cateList = results[2].status === "fulfilled" ? ((results[2].value.data as any)?.result ?? []) : [];
   const realCates = cateList.filter((c: any) => c.type === "cate");
+  const cateCounts = realCates.map((c: any) => ({ name: c.name, count: c.count ?? 0 }));
 
-  const cateCounts = results[3].status === "fulfilled" ? (Array.isArray(results[3].value.data) ? results[3].value.data : []) : [];
+  const links = results[3].status === "fulfilled" ? ((results[3].value.data as any)?.result ?? (Array.isArray(results[3].value.data) ? results[3].value.data : [])) : [];
 
-  const links = results[4].status === "fulfilled" ? (Array.isArray(results[4].value.data) ? results[4].value.data : []) : [];
-
-  const comments = results[5].status === "fulfilled" ? (Array.isArray(results[5].value.data) ? results[5].value.data : []) : [];
+  const comments = results[4].status === "fulfilled" ? ((results[4].value.data as any)?.result ?? (Array.isArray(results[4].value.data) ? results[4].value.data : [])) : [];
 
   const tagCount = tagList.length;
   const cateCount = realCates.length;

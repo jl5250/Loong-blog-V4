@@ -19,8 +19,9 @@ export default function FishpondPage() {
   useEffect(() => {
     getRssList()
       .then((res) => {
-        if (res.code === 200 && Array.isArray(res.data)) {
-          setRssData(res.data);
+        if (res.code === 200) {
+          const list = (res.data as any)?.result ?? (Array.isArray(res.data) ? res.data : []);
+          setRssData(list);
         }
       })
       .catch(console.error)

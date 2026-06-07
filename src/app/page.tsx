@@ -32,10 +32,10 @@ export default async function Home() {
   const covers: string[] = (themeValue as any)?.covers ?? [];
   const articles = articlesRes.status === "fulfilled" ? articlesRes.value.data?.result ?? [] : [];
   const hotArticles = hotRes.status === "fulfilled" ? hotRes.value.data ?? [] : [];
-  const records = recordsRes.status === "fulfilled" ? (Array.isArray(recordsRes.value.data) ? recordsRes.value.data : []) : [];
-  const comments = commentsRes.status === "fulfilled" ? (Array.isArray(commentsRes.value.data) ? commentsRes.value.data : []) : [];
-  const tags = tagsRes.status === "fulfilled" ? tagsRes.value.data ?? [] : [];
-  const cates = catesRes.status === "fulfilled" ? catesRes.value.data ?? [] : [];
+  const records: any[] = recordsRes.status === "fulfilled" ? ((recordsRes.value.data as any)?.result ?? (Array.isArray(recordsRes.value.data) ? recordsRes.value.data : [])) : [];
+  const comments: any[] = commentsRes.status === "fulfilled" ? ((commentsRes.value.data as any)?.result ?? (Array.isArray(commentsRes.value.data) ? commentsRes.value.data : [])) : [];
+  const tags: any[] = tagsRes.status === "fulfilled" ? ((tagsRes.value.data as any)?.result ?? (Array.isArray(tagsRes.value.data) ? tagsRes.value.data : [])) : [];
+  const cates: any[] = catesRes.status === "fulfilled" ? ((catesRes.value.data as any)?.result ?? (Array.isArray(catesRes.value.data) ? catesRes.value.data : [])) : [];
 
   // Pick a cover from theme covers array using article id as seed
   function articleCover(cover: string | undefined | null, id?: number): string {
