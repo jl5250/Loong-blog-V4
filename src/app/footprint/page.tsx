@@ -21,8 +21,8 @@ export default async function FootprintPage() {
   return (
     <main className="flex-1">
       {/* Map */}
-      <section className="px-4 sm:px-6 pt-24 pb-6">
-        <div className="text-center mb-6">
+      <section className="pt-24 pb-6">
+        <div className="text-center mb-6 px-4">
           <span className="font-calligraphy text-5xl md:text-6xl text-text-muted/10 mb-2 block">足</span>
           <h1 className="font-serif font-bold text-2xl md:text-3xl text-text-body mb-1">足迹</h1>
           <p className="font-kai text-text-muted text-sm">Footprint · 行万里路</p>
