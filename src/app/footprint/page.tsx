@@ -19,7 +19,7 @@ function parseImages(images: unknown): string[] | null {
 
 export default async function FootprintPage() {
   const res = await getFootprintList();
-  const footprints = Array.isArray(res.data) ? res.data : [];
+  const footprints: any[] = (res.data as any)?.result ?? (Array.isArray(res.data) ? res.data : []);
 
   return (
     <main className="flex-1 pt-24 sm:pt-28 pb-20">

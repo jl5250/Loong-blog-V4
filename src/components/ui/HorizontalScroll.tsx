@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { useLenis } from "@/components/scroll/LenisScrollProvider";
 
 interface HorizontalScrollProps {
   children: ReactNode;
@@ -9,6 +10,7 @@ interface HorizontalScrollProps {
 
 export function HorizontalScroll({ children, className = "" }: HorizontalScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const lenis = useLenis();
 
   useEffect(() => {
     const el = ref.current;
@@ -24,7 +26,7 @@ export function HorizontalScroll({ children, className = "" }: HorizontalScrollP
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
 
-    // Edge-aware wheel: only consume when container can still scroll in that direction
+    // Edge-aware wheel: consume when container can still scroll, pause Lenis
     const onWheel = (e: WheelEvent) => {
       if (el.scrollWidth <= el.clientWidth) return;
 
@@ -38,18 +40,28 @@ export function HorizontalScroll({ children, className = "" }: HorizontalScrollP
       if (!canConsume) return;
 
       e.preventDefault();
+      e.stopPropagation();
       el.scrollBy({ left: e.deltaY, behavior: "auto" });
     };
 
+    // Pause Lenis on hover, resume on leave
+    const onEnter = () => { lenis?.stop(); };
+    const onLeave = () => { lenis?.start(); down = false; };
+
     el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("mouseenter", onEnter);
+    el.addEventListener("mouseleave", onLeave);
 
     return () => {
       el.removeEventListener("mousedown", onDown);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
       el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("mouseenter", onEnter);
+      el.removeEventListener("mouseleave", onLeave);
+      lenis?.start();
     };
-  }, []);
+  }, [lenis]);
 
   return (
     <div ref={ref} className={`overflow-x-auto scrollbar-none cursor-grab active:cursor-grabbing select-none ${className}`} style={{ touchAction: "pan-y" }}>
