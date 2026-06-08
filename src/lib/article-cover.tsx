@@ -3,6 +3,8 @@
  * 从主题 covers 数组或文章自带 cover 中选取图片
  */
 
+import Image from "next/image";
+
 export interface CoverResult {
   src: string;
   alt: string;
@@ -37,14 +39,18 @@ export function extractCovers(themeValue: unknown): string[] {
 }
 
 /**
- * 文章封面图组件（带 lazy loading 和渐变 fallback）
+ * 文章封面图组件（使用 next/image 自动优化 WebP/AVIF）
  */
 export function ArticleCoverImage({
   cover,
   className = "",
+  width = 380,
+  height = 214,
 }: {
   cover: CoverResult;
   className?: string;
+  width?: number;
+  height?: number;
 }) {
   if (cover.isGradient) {
     return (
@@ -55,12 +61,15 @@ export function ArticleCoverImage({
     );
   }
   return (
-    <img
+    <Image
       src={cover.src}
       alt={cover.alt}
+      width={width}
+      height={height}
       loading="lazy"
       decoding="async"
       className={`${className} object-cover transition-opacity duration-300`}
+      sizes="(max-width: 768px) 85vw, 380px"
     />
   );
 }

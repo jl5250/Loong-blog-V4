@@ -24,9 +24,12 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  /* Image domains — used by next/image if adopted */
+  /* Image optimization with sharp */
   images: {
     remotePatterns: [
+      { protocol: "https", hostname: "txy.loongname.fun" },
+      { protocol: "https", hostname: "oss.loongblog.fun" },
+      { protocol: "https", hostname: "qiniuyun.loongname.fun" },
       { protocol: "https", hostname: "bu.dusays.com" },
       { protocol: "https", hostname: "q1.qlogo.cn" },
       { protocol: "https", hostname: "q.qlogo.cn" },
@@ -35,6 +38,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.thrivex.**" },
       { protocol: "http", hostname: "localhost", port: "8080" },
     ],
+    formats: ["image/avif", "image/webp"],
   },
 
   /* Standalone output for Docker deployment */

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import Image from "next/image";
 
 interface SwiperSlide {
   title: string;
@@ -58,11 +59,14 @@ export function Swiper({ slides }: SwiperProps) {
               style={{ backgroundImage: slide.image ? undefined : gBg, transform: tx, transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
             >
               {slide.image ? (
-                <img
+                <Image
                   src={slide.image}
                   alt={slide.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] ease-out"
+                  fill
+                  sizes="100vw"
+                  className="absolute inset-0 object-cover transition-transform duration-[10s] ease-out"
                   style={{ transform: is ? "scale(1.08)" : "scale(1)" }}
+                  priority={i === 0}
                 />
               ) : (
                 <div className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] ease-out"
