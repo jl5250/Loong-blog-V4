@@ -23,9 +23,10 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
 
     let mapInstance: any = null;
 
-    // Block wheel events from reaching Lenis (prevents page scroll during map zoom)
+    // Bubble phase: AMap handles wheel first (on its canvas), then we stop it
+    // from reaching Lenis at the document level
     const onWheel = (e: WheelEvent) => e.stopPropagation();
-    el.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    el.addEventListener("wheel", onWheel);
 
     const init = async () => {
       try {
@@ -34,7 +35,6 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
 
         (window as any)._AMapSecurityConfig = { securityJsCode: res.data.security_code };
 
-        // Load AMap
         await new Promise<void>((resolve, reject) => {
           if ((window as any).AMap) { resolve(); return; }
           const s = document.createElement("script");
@@ -55,11 +55,9 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
           viewMode: "2D",
         });
 
-        // Markers
         const infoWindow = new AMap.InfoWindow({ offset: new AMap.Pixel(0, -30), isCustom: true });
         mapInstance.on("click", () => infoWindow.close());
 
-        const markers: any[] = [];
         items.forEach((d) => {
           if (!d.position) return;
           const c = d.position.split(",").map(Number);
@@ -70,7 +68,6 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
             map: mapInstance,
             content: `<div style="width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:12px">📍</div>`,
           });
-          markers.push(marker);
 
           marker.on("click", () => {
             infoWindow.setContent(`<div style="padding:12px;min-width:180px"><b>${d.title||""}</b><br/><span style="color:#999;font-size:12px">${d.address||""}</span></div>`);
@@ -78,7 +75,7 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
           });
         });
 
-        if (markers.length > 0) mapInstance.setFitView(markers, false, [60, 60, 60, 60]);
+        // Don't call setFitView — always keep the China view
       } catch {
         setError(true);
       }
@@ -86,7 +83,7 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
 
     init();
     return () => {
-      el.removeEventListener("wheel", onWheel, { capture: true } as any);
+      el.removeEventListener("wheel", onWheel);
       if (mapInstance) mapInstance.destroy();
     };
   }, [items]);
