@@ -21,17 +21,28 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
   const lenis = useLenis();
 
   useEffect(() => {
-    if (!mapRef.current || items.length === 0) {
+    const el = mapRef.current;
+    if (!el || items.length === 0) {
       setStatus("error");
       setErrorMsg("暂无足迹数据");
       return;
     }
 
+    // Block wheel events from reaching Lenis
+    const onWheel = (e: WheelEvent) => {
+      e.stopPropagation();
+      lenis?.stop();
+    };
+    el.addEventListener("wheel", onWheel, { passive: false, capture: true });
+
+    // Resume Lenis when mouse leaves
+    const onMouseLeave = () => lenis?.start();
+    el.addEventListener("mouseleave", onMouseLeave);
+
     let mapInstance: any = null;
 
     const initMap = async () => {
       try {
-        // 1. Get Gaode config
         const configRes = await getGaodeMapConfig();
         if (configRes.code !== 200 || !configRes.data?.key_code) {
           setStatus("error");
@@ -40,11 +51,9 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
         }
 
         const { key_code, security_code } = configRes.data;
-
-        // 2. Set security config before loading script
         (window as any)._AMapSecurityConfig = { securityJsCode: security_code };
 
-        // 3. Load AMap via script tag
+        // Load AMap script
         await new Promise<void>((resolve, reject) => {
           if ((window as any).AMap) { resolve(); return; }
           const script = document.createElement("script");
@@ -56,15 +65,9 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
         });
 
         const AMap = (window as any).AMap;
-        if (!AMap) {
-          setStatus("error");
-          setErrorMsg("AMap not available");
-          return;
-        }
-
+        if (!AMap) { setStatus("error"); setErrorMsg("AMap not available"); return; }
         if (!mapRef.current) { setStatus("error"); return; }
 
-        // 4. Create map
         mapInstance = new AMap.Map(mapRef.current, {
           mapStyle: "amap://styles/grey",
           viewMode: "3D",
@@ -72,17 +75,14 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
           center: [105.625368, 37.746599],
         });
 
-        // 5. Info window
         const infoWindow = new AMap.InfoWindow({
           offset: new AMap.Pixel(0, -30),
           autoMove: true,
           anchor: "bottom-center",
           isCustom: true,
         });
-
         mapInstance.on("click", () => infoWindow.close());
 
-        // 6. Add markers
         const markers: any[] = [];
         items.forEach((data) => {
           if (!data.position) return;
@@ -142,9 +142,12 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
     initMap();
 
     return () => {
+      el.removeEventListener("wheel", onWheel, { capture: true } as any);
+      el.removeEventListener("mouseleave", onMouseLeave);
+      lenis?.start();
       if (mapInstance) mapInstance.destroy();
     };
-  }, [items]);
+  }, [items, lenis]);
 
   return (
     <div className="relative">
@@ -154,12 +157,8 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
         onMouseEnter={() => lenis?.stop()}
         onMouseLeave={() => lenis?.start()}
       />
-      {/* Wheel event listener to block Lenis */}
-      {mapRef.current && (
-        <WheelBlocker elRef={mapRef} lenis={lenis} />
-      )}
       {status === "loading" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-bg-surface">
+        <div className="absolute inset-0 flex items-center justify-center bg-bg-surface z-10">
           <div className="flex flex-col items-center gap-2">
             <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
             <p className="font-kai text-sm text-text-muted">加载地图中...</p>
@@ -167,7 +166,7 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
         </div>
       )}
       {status === "error" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-bg-surface">
+        <div className="absolute inset-0 flex items-center justify-center bg-bg-surface z-10">
           <div className="text-center">
             <span className="font-calligraphy text-4xl text-text-muted/20 mb-2 block">🌍</span>
             <p className="font-kai text-sm text-text-muted/60">{errorMsg || "地图加载失败"}</p>
@@ -176,19 +175,4 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
       )}
     </div>
   );
-}
-
-/** Block wheel events from reaching Lenis when cursor is on the map */
-function WheelBlocker({ elRef, lenis }: { elRef: React.RefObject<HTMLDivElement | null>; lenis: ReturnType<typeof useLenis> }) {
-  useEffect(() => {
-    const el = elRef.current;
-    if (!el) return;
-    const handler = (e: WheelEvent) => {
-      e.stopPropagation();
-      lenis?.stop();
-    };
-    el.addEventListener("wheel", handler, { passive: false, capture: true });
-    return () => el.removeEventListener("wheel", handler, { capture: true } as any);
-  }, [lenis]);
-  return null;
 }
