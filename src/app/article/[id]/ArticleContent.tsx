@@ -157,7 +157,7 @@ export function ArticleContent({ article }: { article: Article }) {
             </div>
 
             {/* Title */}
-            <h1 className="font-serif font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 drop-shadow-2xl">
+            <h1 className="font-serif font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 drop-shadow-2xl overflow-hidden line-clamp-2">
               {article.title}
             </h1>
 

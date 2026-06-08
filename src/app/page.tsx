@@ -79,10 +79,10 @@ export default async function Home() {
         <section className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden px-6">
           <InkParticles />
 
-          <h1 className="font-calligraphy text-[clamp(4rem,13vw,10rem)] leading-[1] mb-3 animate-fade-reveal text-shadow-glow" style={{ animationDelay: "0.3s" }}>
+          <h1 className="font-calligraphy text-[clamp(2.5rem,10vw,10rem)] leading-[1] mb-3 animate-fade-reveal text-shadow-glow max-w-full overflow-wrap-break-word" style={{ animationDelay: "0.3s" }}>
             墨·<span className="text-accent">Loong</span>
           </h1>
-          <p className="font-sans font-extralight text-[clamp(.8rem,1.3vw,1rem)] text-text-muted tracking-[.5em] uppercase animate-fade-reveal" style={{ animationDelay: "1s" }}>
+          <p className="font-sans font-extralight text-[clamp(.8rem,1.3vw,1rem)] text-text-muted tracking-[.5em] uppercase animate-fade-reveal hidden sm:block" style={{ animationDelay: "1s" }}>
             INK CYBER — LITERATI IN THE MACHINE AGE
           </p>
           <p className="font-sans font-light text-base text-text-muted mt-10 animate-fade-reveal" style={{ animationDelay: "1.6s" }}>
@@ -120,7 +120,7 @@ export default async function Home() {
                 const cover = articleCover(a.cover, a.id, a.title);
                 return (
                 <Link key={a.id} href={`/article/${a.id}`}
-                  className="min-w-[280px] max-md:min-w-[75vw] max-w-[380px] w-full flex-shrink-0 snap-start rounded-2xl border border-border bg-bg-card overflow-hidden transition-all duration-400 hover:-translate-y-1.5 hover:border-accent hover:shadow-[0_16px_48px_var(--glow-soft)] relative flex flex-col self-stretch">
+                  className="min-w-[280px] max-md:min-w-[85vw] max-w-[380px] w-full flex-shrink-0 snap-start rounded-2xl border border-border bg-bg-card overflow-hidden transition-all duration-400 hover:-translate-y-1.5 hover:border-accent hover:shadow-[0_16px_48px_var(--glow-soft)] relative flex flex-col self-stretch">
                   <div className="h-[180px] flex-shrink-0 relative overflow-hidden bg-cover bg-center">
                     {cover.isGradient ? (
                       <div className="w-full h-full" style={{ background: "linear-gradient(135deg, var(--bg-surface-raised-hex), var(--bg-surface-hex))" }} />
