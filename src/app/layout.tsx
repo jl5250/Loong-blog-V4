@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   description:
     "Loong·Blog — 业余前端的技术博客与生活记录",
   keywords: ["个人博客", "设计", "技术", "前端", "Next.js"],
+  alternates: {
+    canonical: "https://loongblog.fun",
+  },
   openGraph: {
     type: "website",
     locale: "zh_CN",

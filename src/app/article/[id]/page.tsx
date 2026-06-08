@@ -16,6 +16,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     return {
       title: article.title,
       description: article.description,
+      alternates: {
+        canonical: `https://loongblog.fun/article/${params.id}`,
+      },
       openGraph: {
         title: article.title,
         description: article.description,
@@ -34,5 +37,34 @@ export default async function ArticlePage(props: Props) {
 
   if (!article?.id) notFound();
 
-  return <ArticleContent article={article} />;
+  // JSON-LD structured data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: article.title,
+    description: article.description,
+    image: article.cover || undefined,
+    url: `https://loongblog.fun/article/${article.id}`,
+    author: {
+      "@type": "Person",
+      name: "Loong",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Loong·Blog",
+      url: "https://loongblog.fun",
+    },
+    datePublished: article.createTime,
+    dateModified: article.createTime,
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ArticleContent article={article} />
+    </>
+  );
 }

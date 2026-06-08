@@ -6,6 +6,24 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
 
+  /* Hide X-Powered-By header */
+  poweredByHeader: false,
+
+  /* Security headers */
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        ],
+      },
+    ];
+  },
+
   /* Image domains — used by next/image if adopted */
   images: {
     remotePatterns: [

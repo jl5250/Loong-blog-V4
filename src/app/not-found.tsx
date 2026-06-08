@@ -9,15 +9,26 @@ export default function NotFound() {
         <h1 className="font-calligraphy text-6xl mb-4 text-text-body/70">
           不知所踪
         </h1>
-        <p className="font-serif text-text-muted mb-8">
+        <p className="font-serif text-text-muted mb-2">
           此页如墨滴入水，消散无踪
         </p>
-        <Link
-          href="/"
-          className="inline-block px-8 py-3 rounded-full border border-accent text-accent font-sans text-sm hover:bg-accent hover:text-white transition-colors"
-        >
-          返回首页
-        </Link>
+        <p className="font-kai text-xs text-text-muted/50 mb-8">
+          404 — 页面不存在或已被移除
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            href="/"
+            className="inline-block px-8 py-3 rounded-full border border-accent text-accent font-sans text-sm hover:bg-accent hover:text-white transition-colors"
+          >
+            返回首页
+          </Link>
+          <Link
+            href="/search"
+            className="inline-block px-8 py-3 rounded-full border border-border text-text-muted font-sans text-sm hover:border-accent2 hover:text-accent2 transition-colors"
+          >
+            搜索文章
+          </Link>
+        </div>
       </div>
     </div>
   );
