@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getGaodeMapConfig } from "@/api/config";
+import { useLenis } from "@/components/scroll/LenisScrollProvider";
 
 interface FootprintItem {
   id?: number;
@@ -45,6 +46,7 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const lenis = useLenis();
 
   useEffect(() => {
     if (!mapRef.current || items.length === 0) {
@@ -200,7 +202,10 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
   return (
     <div
       ref={mapRef}
-      className="w-full h-[450px] rounded-2xl overflow-hidden border border-border"
+      className="w-full h-[70vh] min-h-[500px]"
+      onWheel={(e) => e.stopPropagation()}
+      onMouseEnter={() => lenis?.stop()}
+      onMouseLeave={() => lenis?.start()}
     />
   );
 }
