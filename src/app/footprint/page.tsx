@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { getFootprintList } from "@/api/footprint";
 import { formatDate } from "@/lib/format";
+import dynamic from "next/dynamic";
 
 export const revalidate = 300;
-import { FootprintMap } from "@/components/ui/FootprintMap";
+
+const FootprintMap = dynamic(() => import("@/components/ui/FootprintMap").then(m => m.FootprintMap), { ssr: false });
 import { FootprintGallery } from "./FootprintGallery";
 
 export const metadata: Metadata = { title: "足迹" };
@@ -26,9 +28,9 @@ export default async function FootprintPage() {
       {/* ── Map Hero ── */}
       <section className="relative">
         <div className="absolute top-0 left-0 right-0 z-10 pt-24 pb-6 px-6 text-center pointer-events-none">
-          <span className="font-calligraphy text-5xl md:text-6xl text-white/20 mb-2 block">足</span>
-          <h1 className="font-serif font-bold text-2xl md:text-3xl text-white drop-shadow-lg mb-1">足迹</h1>
-          <p className="font-kai text-white/60 text-sm drop-shadow">Footprint · 行万里路</p>
+          <span className="font-calligraphy text-5xl md:text-6xl text-black/20 dark:text-white/20 mb-2 block">足</span>
+          <h1 className="font-serif font-bold text-2xl md:text-3xl text-black dark:text-white drop-shadow-lg mb-1">足迹</h1>
+          <p className="font-kai text-black/60 dark:text-white/60 text-sm drop-shadow">Footprint · 行万里路</p>
         </div>
         <FootprintMap items={footprints} />
       </section>
@@ -37,7 +39,6 @@ export default async function FootprintPage() {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16">
         {footprints.length > 0 ? (
           <div className="relative pl-10">
-            {/* Vertical line */}
             <div className="absolute left-[19px] top-0 bottom-0 w-px bg-border/60" />
 
             {footprints.map((f: any, i: number) => {
@@ -45,24 +46,17 @@ export default async function FootprintPage() {
               const dotColor = i % 2 === 0 ? "var(--accent-hex)" : "var(--accent2-hex)";
               return (
                 <div key={f.id} className="relative pb-10 last:pb-0 group">
-                  {/* Timeline dot */}
                   <div
                     className="absolute left-[11px] top-6 w-[17px] h-[17px] rounded-full border-[3px] border-bg-primary group-hover:scale-125 transition-transform"
                     style={{ background: dotColor }}
                   />
 
-                  {/* Card */}
                   <div className="border border-border rounded-2xl overflow-hidden bg-bg-surface hover:border-accent2/30 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
                     <div className="flex flex-col md:flex-row">
-                      {/* Image */}
                       <div className="md:w-48 h-36 md:h-auto flex-shrink-0 bg-bg-card relative overflow-hidden">
                         {images && images.length > 0 ? (
-                          <img
-                            src={images[0]}
-                            alt={f.title}
-                            loading="lazy"
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+                          <img src={images[0]} alt={f.title} loading="lazy"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/5 to-accent2/5">
                             <span className="font-calligraphy text-3xl text-text-muted/15">📍</span>
@@ -75,7 +69,6 @@ export default async function FootprintPage() {
                         )}
                       </div>
 
-                      {/* Content */}
                       <div className="flex-1 p-5 flex flex-col">
                         <h3 className="font-serif font-bold text-base mb-1 text-text-body">
                           {f.title || "未命名足迹"}
