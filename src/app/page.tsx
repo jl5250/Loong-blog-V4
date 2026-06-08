@@ -35,7 +35,7 @@ export default async function Home() {
     getCateList(),
   ]);
 
-  const swiperData: SwiperType[] = swiperRes.status === "fulfilled" ? (((swiperRes.value.data as { result?: SwiperType[] })?.result) ?? (Array.isArray(swiperRes.value.data) ? swiperRes.value.data as SwiperType[] : [])) : [];
+  const swiperData: SwiperType[] = extractFromSettled(swiperRes) as SwiperType[];
   const themeValue = themeRes.status === "fulfilled" ? themeRes.value.data?.value : null;
   const covers: string[] = (() => {
     const c = (themeValue as ThemeConfig | null)?.covers;
@@ -43,21 +43,21 @@ export default async function Home() {
     if (Array.isArray(c)) return c;
     try { return JSON.parse(c); } catch { return []; }
   })();
-  const articles: Article[] = articlesRes.status === "fulfilled" ? articlesRes.value.data?.result ?? [] : [];
-  const hotArticles: Article[] = hotRes.status === "fulfilled" ? (hotRes.value.data as Article[]) ?? [] : [];
+  const articles: Article[] = extractFromSettled(articlesRes);
+  const hotArticles: Article[] = extractFromSettled(hotRes);
   const records: Record[] = extractFromSettled(recordsRes);
   const comments: Comment[] = extractFromSettled(commentsRes);
   const tags: Tag[] = extractFromSettled(tagsRes);
   const cates: Cate[] = extractFromSettled(catesRes);
 
   // Pick a cover from theme covers array using article id as seed
-  function articleCover(cover: string | undefined | null, id?: number): string {
-    if (cover) return `url(${cover})`;
+  const articleCover = (cover: string | undefined | null, id?: number, title?: string): { src: string; alt: string; isGradient: boolean } => {
+    if (cover) return { src: cover, alt: title || "文章封面", isGradient: false };
     if (covers.length > 0 && id) {
-      return `url(${covers[Math.abs(id) % covers.length]})`;
+      return { src: covers[Math.abs(id) % covers.length], alt: title || "文章封面", isGradient: false };
     }
-    return "linear-gradient(135deg, var(--bg-surface-raised-hex), var(--bg-surface-hex))";
-  }
+    return { src: "", alt: title || "文章封面", isGradient: true };
+  };
 
   // Build swiper slides from API data
   const swiperSlides = swiperData.length > 0 ? swiperData.slice(0, 5).map((s) => ({
@@ -116,14 +116,23 @@ export default async function Home() {
               <hr />
             </div>
             <HorizontalScroll className="flex gap-5 pb-3">
-              {articles.length > 0 ? articles.map((a) => (
+              {articles.length > 0 ? articles.map((a) => {
+                const cover = articleCover(a.cover, a.id, a.title);
+                return (
                 <Link key={a.id} href={`/article/${a.id}`}
                   className="min-w-[280px] max-md:min-w-[75vw] max-w-[380px] w-full flex-shrink-0 snap-start rounded-2xl border border-border bg-bg-card overflow-hidden transition-all duration-400 hover:-translate-y-1.5 hover:border-accent hover:shadow-[0_16px_48px_var(--glow-soft)] relative flex flex-col self-stretch">
-                  <div
-                    className="h-[180px] flex-shrink-0 relative overflow-hidden bg-cover bg-center"
-                    style={{ backgroundImage: articleCover(a.cover, a.id), backgroundSize: "cover" }}
-                    role="img"
-                  >
+                  <div className="h-[180px] flex-shrink-0 relative overflow-hidden bg-cover bg-center">
+                    {cover.isGradient ? (
+                      <div className="w-full h-full" style={{ background: "linear-gradient(135deg, var(--bg-surface-raised-hex), var(--bg-surface-hex))" }} />
+                    ) : (
+                      <img
+                        src={cover.src}
+                        alt={cover.alt}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-opacity duration-300"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-radial from-accent/5 to-transparent opacity-70" />
                     <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-card), transparent 50%)" }} />
                     <span className="absolute top-3.5 left-3.5 px-2.5 py-0.5 rounded-full text-[.6rem] border border-accent2 text-accent2 bg-black/50 backdrop-blur-sm">
@@ -164,13 +173,23 @@ export default async function Home() {
               <hr />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-              {articles.length > 0 ? articles.map((a) => (
+              {articles.length > 0 ? articles.map((a) => {
+                const cover = articleCover(a.cover, a.id, a.title);
+                return (
                 <Link key={a.id} href={`/article/${a.id}`}
                   className="border border-border rounded-2xl overflow-hidden bg-bg-card transition-all duration-400 hover:-translate-y-1 hover:border-accent2 hover:shadow-[0_12px_40px_var(--glow-soft)] relative flex flex-col group">
-                  <div
-                    className="h-[200px] flex-shrink-0 relative overflow-hidden bg-cover bg-center"
-                    style={{ backgroundImage: articleCover(a.cover, a.id) }}
-                  >
+                  <div className="h-[200px] flex-shrink-0 relative overflow-hidden bg-cover bg-center">
+                    {cover.isGradient ? (
+                      <div className="w-full h-full" style={{ background: "linear-gradient(135deg, var(--bg-surface-raised-hex), var(--bg-surface-hex))" }} />
+                    ) : (
+                      <img
+                        src={cover.src}
+                        alt={cover.alt}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-opacity duration-300"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-radial from-accent/5 to-transparent opacity-70" />
                     <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-card), transparent 50%)" }} />
                     <span className="absolute top-3.5 left-3.5 px-2.5 py-0.5 rounded-full text-[.6rem] border border-accent2 text-accent2 bg-black/50 backdrop-blur-sm">
@@ -187,7 +206,7 @@ export default async function Home() {
                     </div>
                   </div>
                 </Link>
-              )) : (
+              )}) : (
                 <div className="col-span-2 text-center py-16 border border-dashed border-border rounded-2xl">
                   <p className="font-kai text-text-muted">暂无文章</p>
                 </div>
