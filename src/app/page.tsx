@@ -149,7 +149,7 @@ export default async function Home() {
                     </div>
                   </div>
                 </Link>
-              )) : (
+              )}) : (
                 Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="min-w-[340px] max-w-[380px] flex-shrink-0 snap-start rounded-2xl border border-border bg-bg-card overflow-hidden">
                     <div className="h-[180px] bg-gradient-to-br from-bg-surface-raised to-bg-surface" />
