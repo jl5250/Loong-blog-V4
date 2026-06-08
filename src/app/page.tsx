@@ -1,82 +1,40 @@
 import { InkParticles } from "@/components/ink/InkParticles";
-import { formatDate } from "@/lib/format";
-import { Swiper } from "@/components/ui/Swiper";
-import { HorizontalScroll } from "@/components/ui/HorizontalScroll";
 import { InkAnimals } from "@/components/ui/InkAnimals";
-import { getArticlePaging, getRecommendedArticleList } from "@/api/article";
-import { getSwiperList } from "@/api/swiper";
-import { getLatestComments } from "@/api/comment";
-import { getThemeConfig } from "@/api/config";
-import { getRecordList } from "@/api/record";
-import { getTagList } from "@/api/tag";
-import { getCateList } from "@/api/cate";
-import { extractFromSettled } from "@/lib/api-helpers";
-import type { Record } from "@/types/record";
-import type { Comment } from "@/types/comment";
-import type { Tag } from "@/types/tag";
-import type { Cate } from "@/types/cate";
-import type { Swiper as SwiperType } from "@/types/swiper";
-import type { Article } from "@/types/article";
-import type { ThemeConfig } from "@/types/config";
-import Link from "next/link";
+import { Suspense } from "react";
+import SwiperSection from "@/components/home/SwiperSection";
+import FeaturedArticlesSection from "@/components/home/FeaturedArticlesSection";
+import LatestArticlesSection from "@/components/home/LatestArticlesSection";
+import TimelineSection from "@/components/home/TimelineSection";
+import CommentsSection from "@/components/home/CommentsSection";
 
 export const revalidate = 60;
 
-export default async function Home() {
-  // Fetch data
-  const [swiperRes, themeRes, articlesRes, hotRes, recordsRes, commentsRes, tagsRes, catesRes] = await Promise.allSettled([
-    getSwiperList(),
-    getThemeConfig(),
-    getArticlePaging(1, 4),
-    getRecommendedArticleList(),
-    getRecordList(1, 5),
-    getLatestComments(1, 5),
-    getTagList(),
-    getCateList(),
-  ]);
+/** 加载中占位 — 墨点风格骨架屏 */
+function SectionSkeleton({ height = "400px" }: { height?: string }) {
+  return (
+    <div className="sn">
+      <div className="sn-inner">
+        <div className="sn-hdr">
+          <div className="h-6 w-32 bg-bg-surface-raised rounded mb-2" />
+          <hr />
+        </div>
+        <div className="animate-pulse" style={{ height }}>
+          <div className="h-full bg-bg-surface-raised/30 rounded-2xl" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  const swiperData: SwiperType[] = extractFromSettled(swiperRes) as SwiperType[];
-  const themeValue = themeRes.status === "fulfilled" ? themeRes.value.data?.value : null;
-  const covers: string[] = (() => {
-    const c = (themeValue as ThemeConfig | null)?.covers;
-    if (!c) return [];
-    if (Array.isArray(c)) return c;
-    try { return JSON.parse(c); } catch { return []; }
-  })();
-  const articles: Article[] = extractFromSettled(articlesRes);
-  const hotArticles: Article[] = extractFromSettled(hotRes);
-  const records: Record[] = extractFromSettled(recordsRes);
-  const comments: Comment[] = extractFromSettled(commentsRes);
-  const tags: Tag[] = extractFromSettled(tagsRes);
-  const cates: Cate[] = extractFromSettled(catesRes);
-
-  // Pick a cover from theme covers array using article id as seed
-  const articleCover = (cover: string | undefined | null, id?: number, title?: string): { src: string; alt: string; isGradient: boolean } => {
-    if (cover) return { src: cover, alt: title || "文章封面", isGradient: false };
-    if (covers.length > 0 && id) {
-      return { src: covers[Math.abs(id) % covers.length], alt: title || "文章封面", isGradient: false };
-    }
-    return { src: "", alt: title || "文章封面", isGradient: true };
-  };
-
-  // Build swiper slides from API data
-  const swiperSlides = swiperData.length > 0 ? swiperData.slice(0, 5).map((s) => ({
-    title: s.title,
-    description: s.description || "",
-    tag: s.title.slice(0, 4),
-    image: s.image,
-  })) : articles.slice(0, 3).map((a) => ({
-    title: a.title,
-    description: a.description || "",
-    tag: a.cateList?.[0]?.name || "文章",
-    image: a.cover || "",
-  }));
-
+export default function Home() {
   return (
     <>
       <main className="flex-1">
         {/* ===== Hero ===== */}
-        <section className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden px-6">
+        <section
+          className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden px-6"
+          style={{ contentVisibility: "auto", containIntrinsicSize: "0 100vh" }}
+        >
           <InkParticles />
 
           <h1 className="font-calligraphy text-[clamp(2.5rem,10vw,10rem)] leading-[1] mb-3 animate-fade-reveal text-shadow-glow max-w-full overflow-wrap-break-word" style={{ animationDelay: "0.3s" }}>
@@ -97,186 +55,30 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ===== Swiper ===== */}
-        <section className="sn">
-          <div className="sn-inner">
-            <div className="sn-hdr">
-              <h2><span className="text-accent">精选推荐</span><span className="en">FEATURED</span></h2>
-              <hr />
-            </div>
-            <Swiper slides={swiperSlides} />
-          </div>
-        </section>
+        {/* ===== Swiper (streamed) ===== */}
+        <Suspense fallback={<SectionSkeleton height="500px" />}>
+          <SwiperSection />
+        </Suspense>
 
-        {/* ===== Featured Articles (Horizontal) ===== */}
-        <section className="sn">
-          <div className="sn-inner">
-            <div className="sn-hdr">
-              <h2><span className="text-accent2">精选文章</span><span className="en">CURATED</span></h2>
-              <hr />
-            </div>
-            <HorizontalScroll className="flex gap-5 pb-3">
-              {articles.length > 0 ? articles.map((a) => {
-                const cover = articleCover(a.cover, a.id, a.title);
-                return (
-                <Link key={a.id} href={`/article/${a.id}`}
-                  className="min-w-[280px] max-md:min-w-[85vw] max-w-[380px] w-full flex-shrink-0 snap-start rounded-2xl border border-border bg-bg-card overflow-hidden transition-all duration-400 hover:-translate-y-1.5 hover:border-accent hover:shadow-[0_16px_48px_var(--glow-soft)] relative flex flex-col self-stretch">
-                  <div className="h-[180px] flex-shrink-0 relative overflow-hidden bg-cover bg-center">
-                    {cover.isGradient ? (
-                      <div className="w-full h-full" style={{ background: "linear-gradient(135deg, var(--bg-surface-raised-hex), var(--bg-surface-hex))" }} />
-                    ) : (
-                      <img
-                        src={cover.src}
-                        alt={cover.alt}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-opacity duration-300"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-radial from-accent/5 to-transparent opacity-70" />
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-card), transparent 50%)" }} />
-                    <span className="absolute top-3.5 left-3.5 px-2.5 py-0.5 rounded-full text-[.6rem] border border-accent2 text-accent2 bg-black/50 backdrop-blur-sm">
-                      {a.cateList?.[0]?.name || "文章"}
-                    </span>
-                  </div>
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-serif font-bold text-sm md:text-base mb-1.5 leading-tight line-clamp-2">{a.title}</h3>
-                    <p className="text-xs text-text-muted leading-relaxed flex-1 line-clamp-2 mb-0">{a.description}</p>
-                    <div className="flex items-center gap-2.5 text-[.65rem] text-text-muted mt-auto pt-2.5 border-t border-border">
-                      <span>{formatDate(a.createTime)}</span>
-                      <span className="text-accent2 ml-auto">{a.view ?? 0} 浏览</span>
-                      <span className="text-[.55rem] text-accent opacity-0 group-hover:opacity-70 rotate-[5deg] transition-opacity font-calligraphy border border-accent rounded-[3px] px-1 py-[1px] leading-tight ml-1">印</span>
-                    </div>
-                  </div>
-                </Link>
-              )}) : (
-                Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="min-w-[340px] max-w-[380px] flex-shrink-0 snap-start rounded-2xl border border-border bg-bg-card overflow-hidden">
-                    <div className="h-[180px] bg-gradient-to-br from-bg-surface-raised to-bg-surface" />
-                    <div className="p-4">
-                      <div className="h-4 w-3/4 bg-bg-surface-raised rounded mb-2" />
-                      <div className="h-3 w-full bg-bg-surface-raised rounded" />
-                    </div>
-                  </div>
-                ))
-              )}
-            </HorizontalScroll>
-            <p className="text-center text-[.6rem] text-text-muted tracking-widest mt-1 font-sans">← 左右滑动 →</p>
-          </div>
-        </section>
+        {/* ===== Featured Articles (streamed) ===== */}
+        <Suspense fallback={<SectionSkeleton height="400px" />}>
+          <FeaturedArticlesSection />
+        </Suspense>
 
-        {/* ===== Latest Articles ===== */}
-        <section className="sn">
-          <div className="sn-inner">
-            <div className="sn-hdr">
-              <h2><span className="text-gold">最新文章</span><span className="en">LATEST</span></h2>
-              <hr />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-              {articles.length > 0 ? articles.map((a) => {
-                const cover = articleCover(a.cover, a.id, a.title);
-                return (
-                <Link key={a.id} href={`/article/${a.id}`}
-                  className="border border-border rounded-2xl overflow-hidden bg-bg-card transition-all duration-400 hover:-translate-y-1 hover:border-accent2 hover:shadow-[0_12px_40px_var(--glow-soft)] relative flex flex-col group">
-                  <div className="h-[200px] flex-shrink-0 relative overflow-hidden bg-cover bg-center">
-                    {cover.isGradient ? (
-                      <div className="w-full h-full" style={{ background: "linear-gradient(135deg, var(--bg-surface-raised-hex), var(--bg-surface-hex))" }} />
-                    ) : (
-                      <img
-                        src={cover.src}
-                        alt={cover.alt}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-opacity duration-300"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-radial from-accent/5 to-transparent opacity-70" />
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-card), transparent 50%)" }} />
-                    <span className="absolute top-3.5 left-3.5 px-2.5 py-0.5 rounded-full text-[.6rem] border border-accent2 text-accent2 bg-black/50 backdrop-blur-sm">
-                      {a.cateList?.[0]?.name || "文章"}
-                    </span>
-                  </div>
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-serif font-bold text-base mb-1.5 leading-tight">{a.title}</h3>
-                    <p className="text-xs text-text-muted leading-relaxed flex-1 line-clamp-2 mb-0">{a.description}</p>
-                    <div className="flex items-center gap-2.5 text-[.65rem] text-text-muted mt-auto pt-2.5 border-t border-border">
-                      <span>{formatDate(a.createTime)}</span>
-                      <span>{a.config?.top ? "置顶" : `${a.view ?? 0} 浏览`}</span>
-                      <span className="ml-auto text-[.55rem] text-accent opacity-0 group-hover:opacity-70 rotate-[5deg] transition-opacity font-calligraphy border border-accent rounded-[3px] px-1 py-[1px] leading-tight">印</span>
-                    </div>
-                  </div>
-                </Link>
-              )}) : (
-                <div className="col-span-2 text-center py-16 border border-dashed border-border rounded-2xl">
-                  <p className="font-kai text-text-muted">暂无文章</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
+        {/* ===== Latest Articles (streamed) ===== */}
+        <Suspense fallback={<SectionSkeleton height="500px" />}>
+          <LatestArticlesSection />
+        </Suspense>
 
-        {/* ===== Timeline ===== */}
-        <section className="sn">
-          <div className="sn-inner">
-            <div className="sn-hdr">
-              <h2><span className="text-accent">最新动态</span><span className="en">RECENT</span></h2>
-              <hr />
-            </div>
-            <div className="tl-v">
-              {records.length > 0 ? records.map((r, i) => (
-                <div key={r.id ?? i} className="tl-item">
-                  <div className="tl-dot" />
-                  <div className="tl-date font-sans">{formatDate(r.createTime)}</div>
-                  <div className="tl-text">{r.content}</div>
-                </div>
-              )) : (
-                <p className="font-kai text-text-muted text-center py-8">暂无动态</p>
-              )}
-            </div>
-          </div>
-        </section>
+        {/* ===== Timeline (streamed) ===== */}
+        <Suspense fallback={<SectionSkeleton height="400px" />}>
+          <TimelineSection />
+        </Suspense>
 
-        {/* ===== Latest Comments ===== */}
-        <section className="sn">
-          <div className="sn-inner">
-            <div className="sn-hdr">
-              <h2><span className="text-accent2">最新评论</span><span className="en">COMMENTS</span></h2>
-              <hr />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {comments.length > 0 ? comments.slice(0, 3).map((c, i) => {
-                const colors = ["accent", "accent2", "gold"];
-                const color = colors[i % colors.length];
-                return (
-                  <Link key={c.id} href={`/article/${c.articleId}#comments`} className="block border border-border rounded-xl p-4 bg-bg-card transition-all hover:border-accent2 hover:-translate-y-0.5">
-                    <div className="flex items-center gap-2.5 mb-2.5">
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[.6rem] font-bold flex-shrink-0 text-white"
-                        style={{ background: `linear-gradient(135deg, var(--${color}-hex), var(--${color}-hex)88)` }}
-                      >
-                        {c.name?.[0] ?? "?"}
-                      </div>
-                      <div>
-                        <div className="text-sm font-bold">{c.name}</div>
-                        <div className="font-sans text-[.55rem] text-text-muted">{formatDate(c.createTime)}</div>
-                      </div>
-                    </div>
-                    <p className="text-xs text-text-muted leading-relaxed mb-2 line-clamp-2">{c.content}</p>
-                    {c.articleTitle && (
-                      <span className="font-sans text-[.6rem] text-accent2">
-                        发表于「{c.articleTitle}」
-                      </span>
-                    )}
-                  </Link>
-                );
-              }) : (
-                <div className="col-span-3 text-center py-8">
-                  <p className="font-kai text-xs text-text-muted">暂无评论</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
+        {/* ===== Latest Comments (streamed) ===== */}
+        <Suspense fallback={<SectionSkeleton height="300px" />}>
+          <CommentsSection />
+        </Suspense>
 
       </main>
 

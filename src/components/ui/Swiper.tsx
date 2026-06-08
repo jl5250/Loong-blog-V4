@@ -39,7 +39,6 @@ export function Swiper({ slides }: SwiperProps) {
     <div onMouseEnter={pause} onMouseLeave={resume}>
       <div className="relative rounded-2xl overflow-hidden h-[460px] max-md:h-[300px] group">
         {slides.map((slide, i) => {
-          const bg = slide.image ? `url(${slide.image})` : gBg;
           const is = i === current;
           const prevI = (current - 1 + slides.length) % slides.length;
           const nextI = (current + 1) % slides.length;
@@ -56,10 +55,19 @@ export function Swiper({ slides }: SwiperProps) {
             <div
               key={i}
               className="absolute inset-0 bg-cover bg-center cursor-pointer"
-              style={{ backgroundImage: bg, transform: tx, transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
+              style={{ backgroundImage: slide.image ? undefined : gBg, transform: tx, transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
             >
-              <div className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] ease-out"
-                style={{ backgroundImage: bg, transform: is ? "scale(1.08)" : "scale(1)" }} />
+              {slide.image ? (
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] ease-out"
+                  style={{ transform: is ? "scale(1.08)" : "scale(1)" }}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] ease-out"
+                  style={{ backgroundImage: gBg, transform: is ? "scale(1.08)" : "scale(1)" }} />
+              )}
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-primary), transparent 50%)" }} />
 
               <div className={`absolute -top-20 -right-20 w-80 h-80 rounded-full transition-all duration-1000 ${is ? "opacity-30 scale-100" : "opacity-0 scale-50"}`}
