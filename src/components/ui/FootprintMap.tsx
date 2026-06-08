@@ -23,6 +23,10 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
 
     let mapInstance: any = null;
 
+    // Block wheel events from reaching Lenis (prevents page scroll during map zoom)
+    const onWheel = (e: WheelEvent) => e.stopPropagation();
+    el.addEventListener("wheel", onWheel, { passive: false, capture: true });
+
     const init = async () => {
       try {
         const res = await getGaodeMapConfig();
@@ -81,7 +85,10 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
     };
 
     init();
-    return () => { if (mapInstance) mapInstance.destroy(); };
+    return () => {
+      el.removeEventListener("wheel", onWheel, { capture: true } as any);
+      if (mapInstance) mapInstance.destroy();
+    };
   }, [items]);
 
   if (error) {
