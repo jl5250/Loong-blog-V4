@@ -13,6 +13,34 @@ interface FootprintItem {
   createTime?: string;
 }
 
+function loadAMapScript(key: string, securityCode: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === "undefined") return reject(new Error("Not browser"));
+
+    // Set security config
+    (window as any)._AMapSecurityConfig = { securityJsCode: securityCode };
+
+    // If AMap already loaded, resolve immediately
+    if ((window as any).AMap) {
+      resolve((window as any).AMap);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `https://webapi.amap.com/maps?v=2.0&key=${key}&plugin=AMap.Scale,AMap.Marker,AMap.InfoWindow`;
+    script.async = true;
+    script.onload = () => {
+      if ((window as any).AMap) {
+        resolve((window as any).AMap);
+      } else {
+        reject(new Error("AMap not available after script load"));
+      }
+    };
+    script.onerror = () => reject(new Error("Failed to load AMap script"));
+    document.head.appendChild(script);
+  });
+}
+
 export function FootprintMap({ items }: { items: FootprintItem[] }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
@@ -29,7 +57,6 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
 
     const initMap = async () => {
       try {
-        // Get Gaode config
         const configRes = await getGaodeMapConfig();
         if (configRes.code !== 200 || !configRes.data?.key_code) {
           setError(true);
@@ -38,36 +65,20 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
         }
 
         const { key_code, security_code } = configRes.data;
-
-        // Set security config
-        (window as any)._AMapSecurityConfig = {
-          securityJsCode: security_code,
-        };
-
-        // Dynamic import AMap loader
-        const AMapLoader = await import("@amap/amap-jsapi-loader");
-
-        const AMap = await AMapLoader.load({
-          key: key_code,
-          version: "2.0",
-          plugins: ["AMap.Scale", "AMap.Marker", "AMap.InfoWindow"],
-        });
+        const AMap = await loadAMapScript(key_code, security_code);
 
         if (!mapRef.current) {
           setLoading(false);
           return;
         }
 
-        // Create map
         mapInstance = new AMap.Map(mapRef.current, {
-          mapStyle: "amap://styles/whitesmoke",
+          mapStyle: "amap://styles/grey",
           viewMode: "3D",
           zoom: 4.8,
           center: [105.625368, 37.746599],
-          layers: [new AMap.TileLayer.Satellite()],
         });
 
-        // Info window
         infoWindow = new AMap.InfoWindow({
           offset: new AMap.Pixel(0, -30),
           autoMove: true,
@@ -75,12 +86,10 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
           isCustom: true,
         });
 
-        // Close info window on map click
         mapInstance.on("click", () => {
           infoWindow.close();
         });
 
-        // Add markers
         const markers: any[] = [];
         items.forEach((data) => {
           if (!data.position) return;
@@ -136,7 +145,6 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
           });
         });
 
-        // Fit bounds
         if (markers.length > 0) {
           mapInstance.setFitView(markers, false, [50, 50, 50, 50]);
         }
