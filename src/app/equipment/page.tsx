@@ -1,6 +1,12 @@
 import { getPageConfig } from "@/api/config";
+import type { Metadata } from "next";
 
 export const revalidate = 300;
+
+export const metadata: Metadata = {
+  title: "设备",
+  description: "Loong·Blog 的设备清单 — 工欲善其事，必先利其器",
+};
 
 interface EquipmentItem {
   name: string;

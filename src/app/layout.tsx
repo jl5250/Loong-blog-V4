@@ -25,6 +25,7 @@ const notoSerifSC = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://loongblog.fun"),
   title: {
     default: "Loong·Blog | ThriveX",
     template: "%s | Loong·Blog",
@@ -36,6 +37,10 @@ export const metadata: Metadata = {
     type: "website",
     locale: "zh_CN",
     siteName: "Loong·Blog",
+    images: ["/og-default.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 
