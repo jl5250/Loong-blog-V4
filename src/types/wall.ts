@@ -13,7 +13,8 @@ export interface Wall {
   color: string;
   content: string;
   email: string;
-  auditStatus: number;
-  createTime: string;
+  status: string;
+  isChoice: number;
+  createTime: number;
   h_captcha_response: string;
 }

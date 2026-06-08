@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { getCateList } from "@/api/cate";
 import { getArticlePaging } from "@/api/article";
+import { extractResult } from "@/lib/api-helpers";
+import type { Cate } from "@/types/cate";
+import type { Article } from "@/types/article";
 import Link from "next/link";
 
 export const revalidate = 300;
@@ -14,8 +17,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   try {
     const params = await props.params;
     const listRes = await getCateList();
-    const cates = (listRes.data as any)?.result ?? [];
-    const cate = cates.find((c: any) => c.id === Number(params.id));
+    const cates = extractResult<Cate>(listRes);
+    const cate = cates.find((c) => c.id === Number(params.id));
     if (cate?.name) return { title: cate.name };
   } catch {}
   return { title: "分类" };
@@ -30,9 +33,9 @@ export default async function CatePage(props: Props) {
     getArticlePaging(1, 20, "", cateId),
   ]);
 
-  const cates = listRes.status === "fulfilled" ? ((listRes.value.data as any)?.result ?? []) : [];
-  const cate = cates.find((c: any) => c.id === cateId);
-  const articles = articlesRes.status === "fulfilled" ? (articlesRes.value.data?.result ?? []) : [];
+  const cates: Cate[] = listRes.status === "fulfilled" ? extractResult<Cate>(listRes.value) : [];
+  const cate = cates.find((c) => c.id === cateId);
+  const articles: Article[] = articlesRes.status === "fulfilled" ? (articlesRes.value.data?.result ?? []) : [];
 
   return (
     <main className="flex-1 pt-28 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
@@ -42,7 +45,7 @@ export default async function CatePage(props: Props) {
       )}
       {articles.length > 0 ? (
         <div className="space-y-4">
-          {articles.map((a: any) => (
+          {articles.map((a) => (
             <Link key={a.id} href={`/article/${a.id}`}
               className="block p-4 md:p-6 rounded-2xl border border-border bg-bg-surface hover:border-accent/40 transition-all">
               <div className="flex items-start justify-between gap-4">

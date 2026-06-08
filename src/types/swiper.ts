@@ -4,5 +4,5 @@ export interface Swiper {
   description: string;
   url: string;
   image: string;
-  createtime?: string;
+  createTime: number;
 }

@@ -6,7 +6,7 @@ interface RecordItem {
   id?: number;
   content: string;
   images: string | string[] | null;
-  createTime?: string;
+  createTime: number;
 }
 
 interface RecordCardProps {
@@ -19,25 +19,25 @@ const MONTH_ZH = [
   "七月", "八月", "九月", "十月", "十一月", "十二月",
 ];
 
-function formatDay(ts: string | undefined): string {
+function formatDay(ts: number | string | undefined): string {
   if (!ts) return "--";
   const d = new Date(Number(ts));
   return String(d.getDate()).padStart(2, "0");
 }
 
-function formatMonth(ts: string | undefined): string {
+function formatMonth(ts: number | string | undefined): string {
   if (!ts) return "--";
   const d = new Date(Number(ts));
   return MONTH_ZH[d.getMonth()] || "--";
 }
 
-function formatTime(ts: string | undefined): string {
+function formatTime(ts: number | string | undefined): string {
   if (!ts) return "";
   const d = new Date(Number(ts));
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-function getRelativeTimeLabel(ts: string | undefined): string {
+function getRelativeTimeLabel(ts: number | string | undefined): string {
   if (!ts) return "";
   const now = new Date();
   const then = new Date(Number(ts));
@@ -118,7 +118,7 @@ export default function RecordCard({ record, isLast }: RecordCardProps) {
 
           {/* Images */}
           <div className="mt-3">
-            <ImageList list={images as any} />
+            <ImageList list={Array.isArray(images) ? images.filter(Boolean) as string[] : images ? [images] : []} />
           </div>
         </div>
       </div>

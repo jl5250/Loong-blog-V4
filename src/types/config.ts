@@ -54,6 +54,6 @@ export interface OtherConfig {
 export interface EnvConfig {
   id: string;
   name: string;
-  value: any;
+  value: Record<string, unknown>;
   notes: string;
 }

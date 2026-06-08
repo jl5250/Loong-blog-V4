@@ -54,7 +54,7 @@ export function WallClient({ cateSlug, cateList, initialWalls }: WallClientProps
         if (result.length > 0) {
           setWalls((prev) => {
             const existIds = new Set(prev.map((w) => w.id));
-            const fresh = result.filter((w: any) => !existIds.has(w.id));
+            const fresh = result.filter((w) => !existIds.has(w.id));
             return [...prev, ...fresh];
           });
           setTotalPages(res.data.pages ?? 1);

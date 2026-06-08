@@ -28,5 +28,5 @@ export interface Article {
   config: ArticleConfig;
   prev: { id: number; title: string };
   next: { id: number; title: string };
-  createTime: string;
+  createTime: number;
 }

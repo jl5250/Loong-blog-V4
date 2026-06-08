@@ -7,12 +7,12 @@ export interface Comment {
   email: string;
   url: string;
   content: string;
-  articleId?: number;
-  articleTitle?: number;
-  commentId?: number;
-  auditStatus?: number;
+  articleId: number;
+  articleTitle: string;
+  commentId: number;
+  status: number;
   children?: Comment[];
-  createTime: string;
+  createTime: number;
   h_captcha_response: string | null;
 }
 

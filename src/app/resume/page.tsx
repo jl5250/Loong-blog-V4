@@ -90,7 +90,7 @@ export default async function ResumePage() {
           <div className="border border-border rounded-2xl p-8 bg-bg-surface mb-8">
             <h3 className="font-serif font-bold text-lg mb-6 flex items-center gap-3"><span className="w-1 h-5 bg-gold rounded" />工作经历</h3>
             <div className="space-y-6">
-              {workExperience.map((exp: any, i: number) => (
+              {workExperience.map((exp: { company: string; position: string; period: string; responsibilities?: string[] }, i: number) => (
                 <div key={i} className="pl-4 border-l-2 border-border">
                   <h4 className="font-serif font-bold text-base">{exp.company}</h4>
                   <p className="font-sans text-xs text-text-muted mb-2">{exp.position} · {exp.period}</p>
@@ -108,7 +108,7 @@ export default async function ResumePage() {
           <div className="border border-border rounded-2xl p-8 bg-bg-surface mb-8">
             <h3 className="font-serif font-bold text-lg mb-6 flex items-center gap-3"><span className="w-1 h-5 bg-accent rounded" />项目</h3>
             <div className="space-y-6">
-              {projects.map((proj: any, i: number) => (
+              {projects.map((proj: { name: string; role?: string; period?: string; description?: string | string[]; techStack?: string[] }, i: number) => (
                 <div key={i} className="p-5 rounded-xl border border-border hover:border-accent/40 transition-colors">
                   <h4 className="font-serif font-bold text-base mb-1">{proj.name}</h4>
                   {proj.role && <p className="font-sans text-xs text-accent2 mb-2">{proj.role} · {proj.period}</p>}

@@ -3,20 +3,15 @@ import { getFootprintList } from "@/api/footprint";
 import { formatDate } from "@/lib/format";
 import { FootprintMap } from "@/components/ui/FootprintMap";
 import { FootprintGallery } from "./FootprintGallery";
+import { extractResult } from "@/lib/api-helpers";
+import type { Footprint } from "@/types/footprint";
 
 export const revalidate = 300;
 export const metadata: Metadata = { title: "足迹" };
 
-function parseImages(images: unknown): string[] | null {
-  if (!images) return null;
-  if (Array.isArray(images)) return images;
-  if (typeof images === "string") { try { return JSON.parse(images); } catch { return null; } }
-  return null;
-}
-
 export default async function FootprintPage() {
   const res = await getFootprintList();
-  const footprints: any[] = (res.data as any)?.result ?? (Array.isArray(res.data) ? res.data : []);
+  const footprints = extractResult<Footprint>(res);
 
   return (
     <main className="flex-1">
@@ -35,8 +30,8 @@ export default async function FootprintPage() {
         {footprints.length > 0 ? (
           <div className="relative pl-10">
             <div className="absolute left-[19px] top-0 bottom-0 w-px bg-border/60" />
-            {footprints.map((f: any, i: number) => {
-              const images = parseImages(f.images);
+            {footprints.map((f, i) => {
+              const images = Array.isArray(f.images) ? f.images : null;
               const dot = i % 2 === 0 ? "var(--accent-hex)" : "var(--accent2-hex)";
               return (
                 <div key={f.id} className="relative pb-10 last:pb-0 group">

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { getTagList } from "@/api/tag";
 import { getCateList } from "@/api/cate";
+import { extractFromSettled } from "@/lib/api-helpers";
+import type { Tag } from "@/types/tag";
+import type { Cate } from "@/types/cate";
 
 export const revalidate = 300;
 import Link from "next/link";
@@ -13,9 +16,9 @@ export default async function TagsPage() {
     getCateList(),
   ]);
 
-  const tags: any[] = tagRes.status === "fulfilled" ? ((tagRes.value.data as any)?.result ?? (Array.isArray(tagRes.value.data) ? tagRes.value.data : [])) : [];
-  const allCates: any[] = cateRes.status === "fulfilled" ? ((cateRes.value.data as any)?.result ?? (Array.isArray(cateRes.value.data) ? cateRes.value.data : [])) : [];
-  const cates = allCates.filter((c: any) => c.type === "cate");
+  const tags: Tag[] = extractFromSettled(tagRes);
+  const allCates: Cate[] = extractFromSettled(cateRes);
+  const cates = allCates.filter((c) => c.type === "cate");
 
   return (
     <main className="flex-1 pt-28 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">

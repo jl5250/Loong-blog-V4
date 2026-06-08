@@ -4,6 +4,6 @@ export interface Footprint {
   address: string;
   content: string;
   position: string;
-  images: string[];
-  createTime?: string;
+  images: string[] | undefined;
+  createTime: number;
 }

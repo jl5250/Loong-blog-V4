@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
 import { getArticlePaging } from "@/api/article";
+import { extractFromSettled } from "@/lib/api-helpers";
+import type { Article } from "@/types/article";
+import type { Tag } from "@/types/tag";
+import type { Cate } from "@/types/cate";
+import type { Web } from "@/types/web";
+import type { Comment } from "@/types/comment";
 
 export const revalidate = 60;
 import { getTagList } from "@/api/tag";
@@ -21,22 +27,22 @@ export default async function DataPage() {
   ]);
 
   const articleData = results[0].status === "fulfilled" ? results[0].value.data : null;
-  const articles = articleData?.result ?? [];
+  const articles: Article[] = articleData?.result ?? [];
   const totalArticles = articleData?.total ?? articles.length;
 
-  const tagList = results[1].status === "fulfilled" ? ((results[1].value.data as any)?.result ?? (Array.isArray(results[1].value.data) ? results[1].value.data : [])) : [];
+  const tagList: Tag[] = extractFromSettled(results[1]);
 
-  const cateList = results[2].status === "fulfilled" ? ((results[2].value.data as any)?.result ?? []) : [];
-  const realCates = cateList.filter((c: any) => c.type === "cate");
-  const cateCounts = realCates.map((c: any) => ({ name: c.name, count: c.count ?? 0 }));
+  const cateList: Cate[] = extractFromSettled(results[2]);
+  const realCates = cateList.filter((c) => c.type === "cate");
+  const cateCounts = realCates.map((c) => ({ name: c.name, count: c.count ?? 0 }));
 
-  const links = results[3].status === "fulfilled" ? ((results[3].value.data as any)?.result ?? (Array.isArray(results[3].value.data) ? results[3].value.data : [])) : [];
+  const links: Web[] = extractFromSettled(results[3]);
 
-  const comments = results[4].status === "fulfilled" ? ((results[4].value.data as any)?.result ?? (Array.isArray(results[4].value.data) ? results[4].value.data : [])) : [];
+  const comments: Comment[] = extractFromSettled(results[4]);
 
   const tagCount = tagList.length;
   const cateCount = realCates.length;
-  const totalViews = articles.reduce((sum: number, a: any) => sum + (a.view || 0), 0);
+  const totalViews = articles.reduce((sum, a) => sum + (a.view || 0), 0);
 
   // Group by month for archive
   const archive: Record<string, typeof articles> = {};
@@ -50,7 +56,7 @@ export default async function DataPage() {
 
   // Category distribution colors
   const pieColors = ["#ff4757", "#00d2d3", "#ecca6a", "#4a90ff", "#ff6b81", "#7bed9f", "#e8e0d5"];
-  const maxCount = Math.max(...cateCounts.map((c: any) => c.count ?? 0), 1);
+  const maxCount = Math.max(...cateCounts.map((c) => c.count ?? 0), 1);
 
   return (
     <main className="flex-1 pt-24 sm:pt-28 pb-20">
@@ -86,7 +92,7 @@ export default async function DataPage() {
 
             {/* Visual bar chart */}
             <div className="space-y-4 mb-6">
-              {cateCounts.map((c: any, i: number) => {
+              {cateCounts.map((c, i) => {
                 const pct = maxCount > 0 ? ((c.count ?? 0) / maxCount) * 100 : 0;
                 const color = pieColors[i % pieColors.length];
                 return (
@@ -108,16 +114,16 @@ export default async function DataPage() {
               <div className="flex flex-col items-center pt-4 border-t border-border">
                 <div className="w-48 h-48 rounded-full mb-4"
                   style={{
-                    background: `conic-gradient(${cateCounts.map((c: any, i: number) => {
-                      const total = cateCounts.reduce((s: number, x: any) => s + (x.count ?? 0), 0);
+                    background: `conic-gradient(${cateCounts.map((c, i) => {
+                      const total = cateCounts.reduce((s, x) => s + (x.count ?? 0), 0);
                       const pct = total > 0 ? ((c.count ?? 0) / total) * 100 : 0;
-                      const startPct = cateCounts.slice(0, i).reduce((s: number, x: any) => s + ((x.count ?? 0) / total) * 100, 0);
+                      const startPct = cateCounts.slice(0, i).reduce((s, x) => s + ((x.count ?? 0) / total) * 100, 0);
                       return `${pieColors[i % pieColors.length]} ${startPct}% ${startPct + pct}%`;
                     }).join(", ")})`,
                   }}
                 />
                 <div className="flex flex-wrap justify-center gap-4">
-                  {cateCounts.map((c: any, i: number) => (
+                  {cateCounts.map((c, i) => (
                     <div key={i} className="flex items-center gap-2 text-xs font-sans text-text-muted">
                       <span className="w-3 h-3 rounded-full" style={{ background: pieColors[i % pieColors.length] }} />
                       {c.name} ({c.count ?? 0})
@@ -138,7 +144,7 @@ export default async function DataPage() {
                 <div key={month}>
                   <h3 className="font-serif font-bold text-sm mb-3 text-text-muted">{month} <span className="text-xs font-sans text-text-muted/40">({archive[month].length} 篇)</span></h3>
                   <div className="space-y-1 pl-4 border-l-2 border-border/40">
-                    {archive[month].map((a: any) => (
+                    {archive[month].map((a) => (
                       <Link key={a.id} href={`/article/${a.id}`}
                         className="flex items-center justify-between py-1.5 px-3 rounded-lg hover:bg-bg-card transition-colors group">
                         <span className="font-kai text-sm text-text-body group-hover:text-accent transition-colors line-clamp-1">{a.title}</span>

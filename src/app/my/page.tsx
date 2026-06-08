@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Character, Goal, Project } from "@/types/my";
 
 const API = process.env.NEXT_PUBLIC_PROJECT_API || "http://localhost:9003/api";
 
@@ -66,7 +67,7 @@ export default async function MyPage() {
               <div className="border border-border rounded-2xl p-8 bg-bg-surface">
                 <h2 className="font-serif font-bold text-xl mb-6 flex items-center gap-3"><span className="w-1 h-6 bg-accent rounded-full" />性格 · Character</h2>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {character.map((c: any, i: number) => (
+                  {character.map((c: Character, i: number) => (
                     <div key={i} className="p-4 rounded-xl border border-border/60 hover:border-accent/40 transition-colors">
                       <div className="flex items-end gap-2 mb-2">
                         <span className="text-2xl font-bold font-serif" style={{ color: c.color || "var(--accent-hex)" }}>{c.value}</span>
@@ -96,7 +97,7 @@ export default async function MyPage() {
               <div className="border border-border rounded-2xl p-8 bg-bg-surface">
                 <h2 className="font-serif font-bold text-xl mb-6 flex items-center gap-3"><span className="w-1 h-6 bg-gold rounded-full" />目标 · Goals</h2>
                 <div className="space-y-3">
-                  {goals.map((g: any, i: number) => (
+                  {goals.map((g: Goal, i: number) => (
                     <div key={i} className="flex items-center gap-4 p-3 rounded-xl border border-border/60">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-sans flex-shrink-0 ${g.status === 3 ? "bg-accent2/20 text-accent2" : "bg-border/30 text-text-muted"}`}>
                         {g.status === 3 ? "✓" : i + 1}
@@ -113,7 +114,7 @@ export default async function MyPage() {
               <div className="border border-border rounded-2xl p-8 bg-bg-surface">
                 <h2 className="font-serif font-bold text-xl mb-6 flex items-center gap-3"><span className="w-1 h-6 bg-accent rounded-full" />项目 · Projects</h2>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {project.map((p: any, i: number) => (
+                  {project.map((p: Project, i: number) => (
                     <div key={i} className="p-5 rounded-xl border border-border hover:border-accent/40 transition-all">
                       {p.images?.[0] && (
                         <div className="h-32 rounded-lg overflow-hidden mb-3 bg-bg-card">

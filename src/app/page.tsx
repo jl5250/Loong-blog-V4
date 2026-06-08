@@ -10,6 +10,14 @@ import { getThemeConfig } from "@/api/config";
 import { getRecordList } from "@/api/record";
 import { getTagList } from "@/api/tag";
 import { getCateList } from "@/api/cate";
+import { extractFromSettled } from "@/lib/api-helpers";
+import type { Record } from "@/types/record";
+import type { Comment } from "@/types/comment";
+import type { Tag } from "@/types/tag";
+import type { Cate } from "@/types/cate";
+import type { Swiper as SwiperType } from "@/types/swiper";
+import type { Article } from "@/types/article";
+import type { ThemeConfig } from "@/types/config";
 import Link from "next/link";
 
 export const revalidate = 60;
@@ -27,15 +35,20 @@ export default async function Home() {
     getCateList(),
   ]);
 
-  const swiperData = swiperRes.status === "fulfilled" ? swiperRes.value.data ?? [] : [];
+  const swiperData: SwiperType[] = swiperRes.status === "fulfilled" ? (((swiperRes.value.data as { result?: SwiperType[] })?.result) ?? (Array.isArray(swiperRes.value.data) ? swiperRes.value.data as SwiperType[] : [])) : [];
   const themeValue = themeRes.status === "fulfilled" ? themeRes.value.data?.value : null;
-  const covers: string[] = (themeValue as any)?.covers ?? [];
-  const articles = articlesRes.status === "fulfilled" ? articlesRes.value.data?.result ?? [] : [];
-  const hotArticles = hotRes.status === "fulfilled" ? hotRes.value.data ?? [] : [];
-  const records: any[] = recordsRes.status === "fulfilled" ? ((recordsRes.value.data as any)?.result ?? (Array.isArray(recordsRes.value.data) ? recordsRes.value.data : [])) : [];
-  const comments: any[] = commentsRes.status === "fulfilled" ? ((commentsRes.value.data as any)?.result ?? (Array.isArray(commentsRes.value.data) ? commentsRes.value.data : [])) : [];
-  const tags: any[] = tagsRes.status === "fulfilled" ? ((tagsRes.value.data as any)?.result ?? (Array.isArray(tagsRes.value.data) ? tagsRes.value.data : [])) : [];
-  const cates: any[] = catesRes.status === "fulfilled" ? ((catesRes.value.data as any)?.result ?? (Array.isArray(catesRes.value.data) ? catesRes.value.data : [])) : [];
+  const covers: string[] = (() => {
+    const c = (themeValue as ThemeConfig | null)?.covers;
+    if (!c) return [];
+    if (Array.isArray(c)) return c;
+    try { return JSON.parse(c); } catch { return []; }
+  })();
+  const articles: Article[] = articlesRes.status === "fulfilled" ? articlesRes.value.data?.result ?? [] : [];
+  const hotArticles: Article[] = hotRes.status === "fulfilled" ? (hotRes.value.data as Article[]) ?? [] : [];
+  const records: Record[] = extractFromSettled(recordsRes);
+  const comments: Comment[] = extractFromSettled(commentsRes);
+  const tags: Tag[] = extractFromSettled(tagsRes);
+  const cates: Cate[] = extractFromSettled(catesRes);
 
   // Pick a cover from theme covers array using article id as seed
   function articleCover(cover: string | undefined | null, id?: number): string {
@@ -230,9 +243,9 @@ export default async function Home() {
                       </div>
                     </div>
                     <p className="text-xs text-text-muted leading-relaxed mb-2 line-clamp-2">{c.content}</p>
-                    {(c as any).articleTitle && (
+                    {c.articleTitle && (
                       <span className="font-sans text-[.6rem] text-accent2">
-                        发表于「{(c as any).articleTitle}」
+                        发表于「{c.articleTitle}」
                       </span>
                     )}
                   </Link>

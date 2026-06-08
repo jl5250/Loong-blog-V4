@@ -20,7 +20,7 @@ export default function FishpondPage() {
     getRssList()
       .then((res) => {
         if (res.code === 200) {
-          const list = (res.data as any)?.result ?? (Array.isArray(res.data) ? res.data : []);
+          const list = (res.data as { result?: RssItem[] })?.result ?? (Array.isArray(res.data) ? res.data as RssItem[] : []);
           setRssData(list);
         }
       })

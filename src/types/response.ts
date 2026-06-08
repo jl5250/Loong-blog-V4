@@ -9,8 +9,8 @@ export interface ResponseData<T> {
 export interface Paginate<T> {
   next: boolean;
   prev: boolean;
-  page: number;
-  size: number;
+  pageNum: number;
+  pageSize: number;
   pages: number;
   total: number;
   result: T;

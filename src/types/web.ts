@@ -16,7 +16,7 @@ export interface Web {
   order: number;
   typeId: number;
   type: WebType;
-  auditStatus: number;
-  createTime?: string;
+  status: string;
+  createTime: number;
   h_captcha_response: string;
 }
