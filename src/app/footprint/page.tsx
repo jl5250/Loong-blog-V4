@@ -7,7 +7,10 @@ import { extractResult } from "@/lib/api-helpers";
 import type { Footprint } from "@/types/footprint";
 
 export const revalidate = 300;
-export const metadata: Metadata = { title: "足迹" };
+export const metadata: Metadata = {
+  title: "足迹",
+  alternates: { canonical: "https://loongblog.fun/footprint" },
+};
 
 export default async function FootprintPage() {
   const res = await getFootprintList();

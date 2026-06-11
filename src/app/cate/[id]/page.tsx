@@ -19,7 +19,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const listRes = await getCateList();
     const cates = extractResult<Cate>(listRes);
     const cate = cates.find((c) => c.id === Number(params.id));
-    if (cate?.name) return { title: cate.name };
+    if (cate?.name) return {
+      title: cate.name,
+      alternates: { canonical: `https://loongblog.fun/cate/${params.id}` },
+    };
   } catch {}
   return { title: "分类" };
 }

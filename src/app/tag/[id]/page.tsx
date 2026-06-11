@@ -9,9 +9,15 @@ export async function generateMetadata(props: { params: Promise<{ id: number }> 
     const tagRes = await getTagList();
     const tags = tagRes.data ?? [];
     const tag = tags.find((t) => t.id === Number(params.id));
-    return { title: tag ? `标签 · ${tag.name}` : "标签" };
+    return {
+      title: tag ? `标签 · ${tag.name}` : "标签",
+      alternates: { canonical: `https://loongblog.fun/tag/${params.id}` },
+    };
   } catch {
-    return { title: "标签" };
+    return {
+      title: "标签",
+      alternates: { canonical: `https://loongblog.fun/tag/${params.id}` },
+    };
   }
 }
 

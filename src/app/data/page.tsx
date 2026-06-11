@@ -15,7 +15,10 @@ import { getLatestComments } from "@/api/comment";
 import Link from "next/link";
 import { formatDate } from "@/lib/format";
 
-export const metadata: Metadata = { title: "数据" };
+export const metadata: Metadata = {
+  title: "数据",
+  alternates: { canonical: "https://loongblog.fun/data" },
+};
 
 export default async function DataPage() {
   const results = await Promise.allSettled([

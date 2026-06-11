@@ -9,7 +9,10 @@ export const revalidate = 300;
 import { getAuthorInfo } from "@/api/user";
 import { FriendClient } from "./FriendClient";
 
-export const metadata: Metadata = { title: "友链" };
+export const metadata: Metadata = {
+  title: "友链",
+  alternates: { canonical: "https://loongblog.fun/friend" },
+};
 
 export default async function FriendPage() {
   const [listRes, typeRes, webRes, authorRes] = await Promise.allSettled([

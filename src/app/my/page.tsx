@@ -11,7 +11,10 @@ async function getMyPageData() {
   } catch { return null; }
 }
 
-export const metadata: Metadata = { title: "关于我" };
+export const metadata: Metadata = {
+  title: "关于我",
+  alternates: { canonical: "https://loongblog.fun/my" },
+};
 
 export default async function MyPage() {
   const data = await getMyPageData();

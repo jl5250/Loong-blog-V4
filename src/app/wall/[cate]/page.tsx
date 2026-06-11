@@ -16,6 +16,7 @@ export async function generateMetadata(props: { params: Promise<{ cate: string }
       return {
         title: matched.name || "留言墙",
         description: `${matched.name || "留言墙"} — Loong·Blog`,
+        alternates: { canonical: `https://loongblog.fun/wall/${cateSlug}` },
       };
     }
   } catch {}
@@ -23,6 +24,7 @@ export async function generateMetadata(props: { params: Promise<{ cate: string }
   return {
     title: cateSlug === "all" ? "留言墙" : "留言墙",
     description: "留言墙 — Loong·Blog",
+    alternates: { canonical: `https://loongblog.fun/wall/${cateSlug}` },
   };
 }
 

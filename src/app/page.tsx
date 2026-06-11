@@ -1,6 +1,7 @@
 import { InkParticles } from "@/components/ink/InkParticles";
 import { InkAnimals } from "@/components/ui/InkAnimals";
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import SwiperSection from "@/components/home/SwiperSection";
 import FeaturedArticlesSection from "@/components/home/FeaturedArticlesSection";
 import LatestArticlesSection from "@/components/home/LatestArticlesSection";
@@ -8,6 +9,10 @@ import TimelineSection from "@/components/home/TimelineSection";
 import CommentsSection from "@/components/home/CommentsSection";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://loongblog.fun" },
+};
 
 /** 加载中占位 — 墨点风格骨架屏 */
 function SectionSkeleton({ height = "400px" }: { height?: string }) {

@@ -14,7 +14,10 @@ async function getResumeData() {
   }
 }
 
-export const metadata: Metadata = { title: "简历" };
+export const metadata: Metadata = {
+  title: "简历",
+  alternates: { canonical: "https://loongblog.fun/resume" },
+};
 
 export default async function ResumePage() {
   const data = await getResumeData();

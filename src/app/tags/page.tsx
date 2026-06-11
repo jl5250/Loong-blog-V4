@@ -8,7 +8,10 @@ import type { Cate } from "@/types/cate";
 export const revalidate = 300;
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "标签云" };
+export const metadata: Metadata = {
+  title: "标签云",
+  alternates: { canonical: "https://loongblog.fun/tags" },
+};
 
 export default async function TagsPage() {
   const [tagRes, cateRes] = await Promise.allSettled([
