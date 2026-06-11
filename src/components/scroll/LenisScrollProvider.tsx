@@ -9,6 +9,10 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+gsap.registerPlugin(ScrollToPlugin);
 
 interface ScrollContextValue {
   scrollTo: (target: number | HTMLElement | string, immediate?: boolean) => void;
@@ -39,50 +43,29 @@ export function LenisScrollProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const scrollTo = useCallback((target: number | HTMLElement | string, immediate = false) => {
-    let y = 0;
-    if (typeof target === "number") {
-      y = target;
-    } else if (target instanceof HTMLElement) {
-      y = target.getBoundingClientRect().top + window.scrollY - 80;
-    } else if (typeof target === "string") {
-      const el = document.querySelector(target);
-      if (el) y = (el as HTMLElement).getBoundingClientRect().top + window.scrollY - 80;
-    }
-
     if (immediate) {
-      window.scrollTo(0, y);
+      if (typeof target === "number") {
+        window.scrollTo(0, target);
+      } else if (target instanceof HTMLElement) {
+        window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - 80);
+      }
       return;
     }
 
-    // Smooth scroll with GSAP-like ease, cancel on user interaction
-    const startY = window.scrollY;
-    const diff = y - startY;
-    if (Math.abs(diff) < 1) return;
-
-    let raf = 0;
-    let cancelled = false;
-    const startTime = performance.now();
-    const duration = 800;
-    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-
-    const onCancel = () => { cancelled = true; };
-    window.addEventListener("wheel", onCancel, { passive: true, once: true });
-    window.addEventListener("touchmove", onCancel, { passive: true, once: true });
-
-    const step = (now: number) => {
-      if (cancelled) return;
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      window.scrollTo(0, startY + diff * ease(progress));
-      if (progress < 1) {
-        raf = requestAnimationFrame(step);
-      } else {
-        window.removeEventListener("wheel", onCancel);
-        window.removeEventListener("touchmove", onCancel);
-      }
+    // GSAP smooth scroll — automatically cancels if user scrolls during animation
+    const opts: gsap.TweenVars = {
+      duration: 0.8,
+      ease: "power3.out",
+      overwrite: true,
     };
 
-    raf = requestAnimationFrame(step);
+    if (typeof target === "number") {
+      gsap.to(window, { ...opts, scrollTo: { y: target, autoKill: true } });
+    } else if (target instanceof HTMLElement) {
+      gsap.to(window, { ...opts, scrollTo: { y: target, offsetY: 80, autoKill: true } });
+    } else if (typeof target === "string") {
+      gsap.to(window, { ...opts, scrollTo: { y: target, offsetY: 80, autoKill: true } });
+    }
   }, []);
 
   const onScrollCb = useCallback((cb: (scroll: number) => void) => {
