@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default async function LatestArticlesSection() {
   const [articlesRes, themeRes] = await Promise.allSettled([
-    getArticlePaging(1, 4),
+    getArticlePaging(2, 4),
     getThemeConfig(),
   ]);
 
