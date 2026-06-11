@@ -53,6 +53,7 @@ export default function RootLayout({
     <html
       lang="zh-CN"
       data-theme="dark"
+      data-scroll-behavior="smooth"
       className={`${notoSerifSC.variable} h-full antialiased`}
       suppressHydrationWarning
     >
