@@ -10,27 +10,39 @@ import {
   type ReactNode,
 } from "react";
 
-/* ── Smooth scroll animation ── */
+/* ── Smooth scroll animation with user-interrupt ── */
+let currentRaf = 0;
+
 function smoothScrollTo(targetY: number, duration = 800) {
+  cancelAnimationFrame(currentRaf);
+
   const startY = window.scrollY;
   const diff = targetY - startY;
   if (Math.abs(diff) < 1) return;
 
-  let raf = 0;
   const startTime = performance.now();
-
-  // ease-out cubic
   const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 
+  // Cancel animation if user scrolls manually
+  let cancelled = false;
+  const onUserScroll = () => { cancelled = true; };
+  window.addEventListener("wheel", onUserScroll, { passive: true, once: true });
+  window.addEventListener("touchmove", onUserScroll, { passive: true, once: true });
+
   const step = (now: number) => {
+    if (cancelled) return;
     const elapsed = now - startTime;
     const progress = Math.min(elapsed / duration, 1);
     window.scrollTo(0, startY + diff * ease(progress));
-    if (progress < 1) raf = requestAnimationFrame(step);
+    if (progress < 1) {
+      currentRaf = requestAnimationFrame(step);
+    } else {
+      window.removeEventListener("wheel", onUserScroll);
+      window.removeEventListener("touchmove", onUserScroll);
+    }
   };
 
-  raf = requestAnimationFrame(step);
-  return () => cancelAnimationFrame(raf);
+  currentRaf = requestAnimationFrame(step);
 }
 
 /* ── Context ── */
