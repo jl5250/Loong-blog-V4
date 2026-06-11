@@ -10,7 +10,7 @@ export const getArticleList = () =>
 
 export const getArticlePaging = (page: number, size: number, key?: string, cateId?: number, tagId?: number) =>
   request<Paginate<Article[]>>("GET", "/article", {
-    params: { page, size, key, cateId, tagId },
+    params: { pageNum: page, pageSize: size, key, cateId, tagId },
   });
 
 export const getRandomArticleList = () =>
