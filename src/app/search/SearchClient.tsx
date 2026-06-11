@@ -121,9 +121,10 @@ export function SearchClient() {
                         <span className="text-accent2">{a.cateList[0].name}</span>
                       )}
                       {a.tagList?.slice(0, 2).map((t) => (
-                        <span key={t.id} className="border border-border/50 rounded px-2 py-0.5 text-[.6rem]">
+                        <Link key={t.id} href={`/tag/${t.id}`}
+                          className="border border-border/50 rounded px-2 py-0.5 text-[.6rem] hover:border-accent2 hover:text-accent2 transition-colors">
                           #{t.name}
-                        </span>
+                        </Link>
                       ))}
                     </div>
                   </Link>

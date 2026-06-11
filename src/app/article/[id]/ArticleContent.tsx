@@ -178,9 +178,10 @@ export function ArticleContent({ article }: { article: Article }) {
                 <span className="font-medium">{article.comment ?? 0}</span>
               </span>
               {article.tagList?.slice(0, 3).map((t) => (
-                <span key={t.id} className="text-xs border border-border/60 rounded px-2 py-1 backdrop-blur-sm bg-black/10">
+                <Link key={t.id} href={`/tag/${t.id}`}
+                  className="text-xs border border-border/60 rounded px-2 py-1 backdrop-blur-sm bg-black/10 hover:border-accent2 hover:text-accent2 transition-colors">
                   #{t.name}
-                </span>
+                </Link>
               ))}
             </div>
           </div>
