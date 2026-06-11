@@ -92,5 +92,5 @@ export function FootprintMap({ items }: { items: FootprintItem[] }) {
     return <div className="w-full h-[500px] rounded-2xl border border-dashed border-border bg-bg-surface flex items-center justify-center"><p className="font-kai text-sm text-text-muted/60">地图加载失败</p></div>;
   }
 
-  return <div ref={mapRef} className="w-full h-[60vh] min-h-[450px]" />;
+  return <div ref={mapRef} className="w-full h-[60vh] min-h-[450px] rounded-2xl overflow-hidden border border-border" />;
 }

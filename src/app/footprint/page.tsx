@@ -27,7 +27,9 @@ export default async function FootprintPage() {
           <h1 className="font-serif font-bold text-2xl md:text-3xl text-text-body mb-1">足迹</h1>
           <p className="font-kai text-text-muted text-sm">Footprint · 行万里路</p>
         </div>
-        <FootprintMap items={footprints} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <FootprintMap items={footprints} />
+        </div>
       </section>
 
       {/* Timeline */}
