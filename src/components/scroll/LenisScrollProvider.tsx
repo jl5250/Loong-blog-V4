@@ -10,6 +10,30 @@ import {
   type ReactNode,
 } from "react";
 
+/* ── Smooth scroll animation ── */
+function smoothScrollTo(targetY: number, duration = 800) {
+  const startY = window.scrollY;
+  const diff = targetY - startY;
+  if (Math.abs(diff) < 1) return;
+
+  let raf = 0;
+  const startTime = performance.now();
+
+  // ease-out cubic
+  const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+
+  const step = (now: number) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    window.scrollTo(0, startY + diff * ease(progress));
+    if (progress < 1) raf = requestAnimationFrame(step);
+  };
+
+  raf = requestAnimationFrame(step);
+  return () => cancelAnimationFrame(raf);
+}
+
+/* ── Context ── */
 interface ScrollContextValue {
   stop: () => void;
   start: () => void;
@@ -45,14 +69,19 @@ export function LenisScrollProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const scrollTo = useCallback((target: number | HTMLElement | string, immediate = false) => {
-    const behavior = immediate ? "auto" : "smooth";
+    let y = 0;
     if (typeof target === "number") {
-      window.scrollTo({ top: target, behavior });
+      y = target;
     } else if (target instanceof HTMLElement) {
-      target.scrollIntoView({ behavior, block: "start" });
+      y = target.getBoundingClientRect().top + window.scrollY - 80;
     } else if (typeof target === "string") {
       const el = document.querySelector(target);
-      if (el) (el as HTMLElement).scrollIntoView({ behavior, block: "start" });
+      if (el) y = (el as HTMLElement).getBoundingClientRect().top + window.scrollY - 80;
+    }
+    if (immediate) {
+      window.scrollTo(0, y);
+    } else {
+      smoothScrollTo(y);
     }
   }, []);
 
