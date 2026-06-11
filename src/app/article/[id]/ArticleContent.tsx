@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useLenis } from "@/components/scroll/LenisScrollProvider";
 import type { Article } from "@/types/article";
 import { formatDate } from "@/lib/format";
 import { ArticleComments } from "@/components/article/ArticleComments";
@@ -29,7 +28,6 @@ function ReadingProgress() {
 
 /* ───── TOC ───── */
 function TOCSidebar() {
-  const lenis = useLenis();
   const [activeId, setActiveId] = useState("");
   const [visible, setVisible] = useState(false);
   const headingsRef = useRef<{ id: string; text: string; level: number }[]>([]);
@@ -48,7 +46,6 @@ function TOCSidebar() {
     return () => obs.disconnect();
   }, []);
 
-  // Show TOC only after scrolling past the hero section
   useEffect(() => {
     const threshold = typeof window !== "undefined" ? window.innerHeight * 0.8 : 600;
     const onScroll = () => setVisible(window.scrollY > threshold);
@@ -69,7 +66,7 @@ function TOCSidebar() {
         {headingsRef.current.map((h, i) => (
           <button key={i} onClick={() => {
             const el = document.getElementById(h.id);
-            if (el && lenis) lenis.scrollTo(el);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
           }}
             className={`block w-full text-left transition-colors duration-300 border-l-2 py-1 text-xs bg-transparent cursor-pointer ${
               activeId === h.id ? "border-accent text-accent" : "border-border text-text-muted/60 hover:text-text-body hover:border-text-muted"
@@ -85,8 +82,6 @@ function TOCSidebar() {
 
 /* ───── Article Content ───── */
 export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: Article; coverUrl?: string }) {
-  const lenis = useLenis();
-
   // Force scroll to top when entering article (unless URL has hash)
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -95,18 +90,14 @@ export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: A
     }
     const hash = window.location.hash;
     if (hash) {
-      // Delay to ensure DOM is ready, then scroll to anchor
       const timer = setTimeout(() => {
         const el = document.querySelector(hash);
-        if (el) {
-          const y = (el as HTMLElement).getBoundingClientRect().top + window.scrollY - 80;
-          window.scrollTo(0, y);
-        }
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 200);
       return () => clearTimeout(timer);
     }
     window.scrollTo(0, 0);
-  }, []); // Only run once on mount
+  }, []);
 
   const coverUrl = coverUrlProp || article.cover ||
     "https://bu.dusays.com/2023/11/10/654e2da1d80f8.jpg";

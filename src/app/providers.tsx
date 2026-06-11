@@ -2,7 +2,6 @@
 
 import { useEffect, type ReactNode } from "react";
 import { ThemeProvider } from "@/lib/theme";
-import { LenisScrollProvider } from "@/components/scroll/LenisScrollProvider";
 import { NavigationProgress } from "@/components/ui/NavigationProgress";
 import { getOtherConfig } from "@/api/config";
 import { injectBaiduAnalytics } from "@/lib/analytics/baidu";
@@ -17,17 +16,15 @@ export function Providers({ children }: { children: ReactNode }) {
     // Patch releasePointerCapture to suppress pointer capture errors in image viewer
     const orig = Element.prototype.releasePointerCapture;
     const patched = function (this: Element, id: number) {
-      try { orig.call(this, id); } catch { /* suppress - lib calls releasePointerCapture without active pointer */ }
+      try { orig.call(this, id); } catch { /* suppress */ }
     };
-    let mounted = true;
     (Element.prototype as any).releasePointerCapture = patched;
     return () => {
-      mounted = false;
       (Element.prototype as any).releasePointerCapture = orig;
     };
   }, []);
 
-  // Single bootstrap for Baidu analytics — fetch config once, inject once, silently fail
+  // Single bootstrap for Baidu analytics
   useEffect(() => {
     let cancelled = false;
     getOtherConfig()
@@ -36,16 +33,14 @@ export function Providers({ children }: { children: ReactNode }) {
         const token = res.data?.value?.baidu_token ?? "";
         injectBaiduAnalytics(token);
       })
-      .catch(() => {
-        // analytics bootstrap must fail silently
-      });
+      .catch(() => {});
     return () => { cancelled = true; };
   }, []);
 
   return (
     <ThemeProvider>
       <NavigationProgress />
-      <LenisScrollProvider>{children}</LenisScrollProvider>
+      {children}
     </ThemeProvider>
   );
 }
