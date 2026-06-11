@@ -30,7 +30,7 @@ export default function LatestArticlesSection() {
     getArticlePaging(page, 4).then((res) => {
       const data = res.data;
       setArticles((data?.result ?? []).slice(0, 4));
-      setTotalPages(data?.totalPage ?? 1);
+      setTotalPages(data?.pages ?? 1);
       setLoading(false);
     }).catch(() => {
       setLoading(false);
