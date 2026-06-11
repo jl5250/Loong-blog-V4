@@ -118,15 +118,18 @@ export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: A
     // If URL has hash, scroll to that element instead of top
     const hash = window.location.hash;
     if (hash) {
-      const el = document.querySelector(hash);
-      if (el) {
-        if (lenis) {
-          lenis.scrollTo(el as HTMLElement, true);
-        } else {
-          el.scrollIntoView({ behavior: "smooth" });
+      // Delay to ensure DOM is fully rendered after navigation
+      const timer = setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) {
+          if (lenis) {
+            lenis.scrollTo(el as HTMLElement, true);
+          } else {
+            el.scrollIntoView({ behavior: "smooth" });
+          }
         }
-        return;
-      }
+      }, 100);
+      return () => clearTimeout(timer);
     }
     if (lenis) {
       lenis.scrollTo(0, true);

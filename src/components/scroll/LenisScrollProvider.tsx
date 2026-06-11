@@ -17,7 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
 interface LenisContextValue {
   stop: () => void;
   start: () => void;
-  scrollTo: (target: number, immediate?: boolean) => void;
+  scrollTo: (target: number | HTMLElement | string, immediate?: boolean) => void;
   onScroll: (cb: (scroll: number) => void) => void;
   offScroll: (cb: (scroll: number) => void) => void;
   /** Current scroll position (updated on every Lenis tick). */

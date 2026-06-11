@@ -52,6 +52,10 @@ export function HorizontalScroll({ children, className = "" }: HorizontalScrollP
     el.addEventListener("mouseenter", onEnter);
     el.addEventListener("mouseleave", onLeave);
 
+    // Also restart Lenis if page becomes visible again (e.g. back/forward navigation)
+    const onVisibility = () => { if (document.visibilityState === "visible") lenis?.start(); };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       el.removeEventListener("mousedown", onDown);
       window.removeEventListener("mousemove", onMove);
@@ -59,6 +63,7 @@ export function HorizontalScroll({ children, className = "" }: HorizontalScrollP
       el.removeEventListener("wheel", onWheel);
       el.removeEventListener("mouseenter", onEnter);
       el.removeEventListener("mouseleave", onLeave);
+      document.removeEventListener("visibilitychange", onVisibility);
       lenis?.start();
     };
   }, [lenis]);
