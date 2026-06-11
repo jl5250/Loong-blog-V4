@@ -164,17 +164,17 @@ export function ArticleContent({ article }: { article: Article }) {
             {/* Meta */}
             <div className="flex justify-center items-center gap-3 md:gap-8 text-xs md:text-base font-sans text-text-body/90 flex-wrap">
               <span className="flex items-center gap-2">
-                <span>📅</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
                 <span className="font-medium">{formatDate(article.createTime)}</span>
               </span>
               <span className="w-1 h-1 rounded-full bg-text-body/20" />
               <span className="flex items-center gap-2">
-                <span>👁</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                 <span className="font-medium">{article.view ?? 0}</span>
               </span>
               <span className="w-1 h-1 rounded-full bg-text-body/20" />
               <span className="flex items-center gap-2">
-                <span>💬</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
                 <span className="font-medium">{article.comment ?? 0}</span>
               </span>
               {article.tagList?.slice(0, 3).map((t) => (
