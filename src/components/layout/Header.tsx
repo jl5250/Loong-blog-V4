@@ -6,33 +6,26 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/theme";
 import { getCateList } from "@/api/cate";
 import { getThemeConfig } from "@/api/config";
-import { useLenis } from "@/components/scroll/LenisScrollProvider";
 import type { Cate } from "@/types/cate";
 import type { ThemeConfig } from "@/types/config";
 
 export function Header() {
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
-  const lenis = useLenis();
   const [scrolled, setScrolled] = useState(false);
   const [cates, setCates] = useState<Cate[]>([]);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [themeCfg, setThemeCfg] = useState<ThemeConfig | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Scroll state: Lenis on desktop, native on mobile
+  // Scroll state
   useEffect(() => {
     const threshold = typeof window !== "undefined" ? window.innerHeight * 0.2 : 150;
-    if (lenis) {
-      const onScroll = (scroll: number) => setScrolled(scroll > threshold);
-      lenis.onScroll(onScroll);
-      return () => lenis.offScroll(onScroll);
-    }
     const onScroll = () => setScrolled(window.scrollY > threshold);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [lenis]);
+  }, []);
 
   useEffect(() => {
     getCateList().then((res) => {

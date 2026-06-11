@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { useLenis } from "@/components/scroll/LenisScrollProvider";
 
 interface HorizontalScrollProps {
   children: ReactNode;
@@ -10,7 +9,6 @@ interface HorizontalScrollProps {
 
 export function HorizontalScroll({ children, className = "" }: HorizontalScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const lenis = useLenis();
 
   useEffect(() => {
     const el = ref.current;
@@ -26,7 +24,7 @@ export function HorizontalScroll({ children, className = "" }: HorizontalScrollP
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
 
-    // Edge-aware wheel: consume when container can still scroll, pause Lenis
+    // Edge-aware wheel: consume when container can still scroll
     const onWheel = (e: WheelEvent) => {
       if (el.scrollWidth <= el.clientWidth) return;
 
@@ -44,29 +42,15 @@ export function HorizontalScroll({ children, className = "" }: HorizontalScrollP
       el.scrollBy({ left: e.deltaY, behavior: "auto" });
     };
 
-    // Pause Lenis on hover, resume on leave
-    const onEnter = () => { lenis?.stop(); };
-    const onLeave = () => { lenis?.start(); down = false; };
-
     el.addEventListener("wheel", onWheel, { passive: false });
-    el.addEventListener("mouseenter", onEnter);
-    el.addEventListener("mouseleave", onLeave);
-
-    // Also restart Lenis if page becomes visible again (e.g. back/forward navigation)
-    const onVisibility = () => { if (document.visibilityState === "visible") lenis?.start(); };
-    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       el.removeEventListener("mousedown", onDown);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
       el.removeEventListener("wheel", onWheel);
-      el.removeEventListener("mouseenter", onEnter);
-      el.removeEventListener("mouseleave", onLeave);
-      document.removeEventListener("visibilitychange", onVisibility);
-      lenis?.start();
     };
-  }, [lenis]);
+  }, []);
 
   return (
     <div ref={ref} className={`overflow-x-auto scrollbar-none cursor-grab active:cursor-grabbing select-none ${className}`} style={{ touchAction: "pan-y" }}>

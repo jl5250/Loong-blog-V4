@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useLenis } from "@/components/scroll/LenisScrollProvider";
-import { scrollDocumentTo } from "@/lib/scroll/scrollTo";
 import type { Article } from "@/types/article";
 import { formatDate } from "@/lib/format";
 import { ArticleComments } from "@/components/article/ArticleComments";
@@ -12,22 +10,15 @@ import { MarkdownRenderer } from "@/components/article/MarkdownRenderer";
 /* ───── Reading Progress ───── */
 function ReadingProgress() {
   const [progress, setProgress] = useState(0);
-  const lenis = useLenis();
   useEffect(() => {
-    const calc = (scrollTop: number) => {
+    const onScroll = () => {
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0);
+      setProgress(docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0);
     };
-    if (lenis) {
-      const onScroll = (scroll: number) => calc(scroll);
-      lenis.onScroll(onScroll);
-      return () => lenis.offScroll(onScroll);
-    }
-    const onScroll = () => calc(window.scrollY);
-    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [lenis]);
+  }, []);
   return (
     <div className="fixed left-0 top-0 h-1 z-[60] w-full pointer-events-none">
       <div className="h-full bg-gradient-to-r from-accent via-accent2 to-accent transition-all duration-150 ease-out" style={{ width: `${progress * 100}%` }} />
@@ -40,7 +31,6 @@ function TOCSidebar() {
   const [activeId, setActiveId] = useState("");
   const [visible, setVisible] = useState(false);
   const headingsRef = useRef<{ id: string; text: string; level: number }[]>([]);
-  const lenis = useLenis();
 
   useEffect(() => {
     const els = document.querySelectorAll<HTMLHeadingElement>(".article-body h2, .article-body h3");
@@ -59,16 +49,11 @@ function TOCSidebar() {
   // Show TOC only after scrolling past the hero section
   useEffect(() => {
     const threshold = typeof window !== "undefined" ? window.innerHeight * 0.8 : 600;
-    if (lenis) {
-      const onScroll = (scroll: number) => setVisible(scroll > threshold);
-      lenis.onScroll(onScroll);
-      return () => lenis.offScroll(onScroll);
-    }
     const onScroll = () => setVisible(window.scrollY > threshold);
-    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [lenis]);
+  }, []);
 
   if (headingsRef.current.length === 0) return null;
 
@@ -82,17 +67,7 @@ function TOCSidebar() {
         {headingsRef.current.map((h, i) => (
           <button key={i} onClick={() => {
             const el = document.getElementById(h.id);
-            if (el) {
-              const rect = el.getBoundingClientRect();
-              if (lenis) {
-                // Lenis uses transform-based scroll; window.scrollY is always 0.
-                // Lenis.scrollTo() expects viewport-relative offset from current position.
-                const offset = rect.top - 80;
-                lenis.scrollTo(lenis.scroll + offset, false);
-              } else {
-                scrollDocumentTo(rect.top + window.scrollY - 80, null, false);
-              }
-            }
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
           }}
             className={`block w-full text-left transition-colors duration-300 border-l-2 py-1 text-xs bg-transparent cursor-pointer ${
               activeId === h.id ? "border-accent text-accent" : "border-border text-text-muted/60 hover:text-text-body hover:border-text-muted"
@@ -108,37 +83,22 @@ function TOCSidebar() {
 
 /* ───── Article Content ───── */
 export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: Article; coverUrl?: string }) {
-  const lenis = useLenis();
   // Force scroll to top when entering article (unless URL has hash)
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.history?.scrollRestoration) {
       window.history.scrollRestoration = "manual";
     }
-    // If URL has hash, scroll to that element instead of top
     const hash = window.location.hash;
     if (hash) {
-      // Delay to ensure DOM is fully rendered after navigation
       const timer = setTimeout(() => {
         const el = document.querySelector(hash);
-        if (el) {
-          if (lenis) {
-            lenis.scrollTo(el as HTMLElement, true);
-          } else {
-            el.scrollIntoView({ behavior: "smooth" });
-          }
-        }
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
       return () => clearTimeout(timer);
     }
-    if (lenis) {
-      lenis.scrollTo(0, true);
-    } else {
-      window.scrollTo(0, 0);
-      const timer = setTimeout(() => window.scrollTo(0, 0), 50);
-      return () => clearTimeout(timer);
-    }
-  }, [lenis]);
+    window.scrollTo(0, 0);
+  }, []);
 
   const coverUrl = coverUrlProp || article.cover ||
     "https://bu.dusays.com/2023/11/10/654e2da1d80f8.jpg";
