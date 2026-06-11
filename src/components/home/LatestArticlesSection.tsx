@@ -62,7 +62,7 @@ export default function LatestArticlesSection() {
     <section className="sn" style={{ contentVisibility: "auto", containIntrinsicSize: "0 500px" }}>
       <div className="sn-inner">
         <div className="sn-hdr">
-          <h2><span className="text-gold">最新文章</span><span className="en">LATEST</span></h2>
+          <h2><span className="text-gold">全部文章</span><span className="en">ALL ARTICLES</span></h2>
           <hr />
         </div>
 
