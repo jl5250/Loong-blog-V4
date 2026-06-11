@@ -16,6 +16,7 @@ async function getResumeData() {
 
 export const metadata: Metadata = {
   title: "简历",
+  description: "Loong·Blog 作者的个人简历 — 教育背景、工作经历与技能",
   alternates: { canonical: "https://loongblog.fun/resume" },
 };
 

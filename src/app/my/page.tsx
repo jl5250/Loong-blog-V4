@@ -14,6 +14,7 @@ async function getMyPageData() {
 
 export const metadata: Metadata = {
   title: "关于我",
+  description: "关于 Loong·Blog 的作者 — 性格、技术栈、目标与项目经历",
   alternates: { canonical: "https://loongblog.fun/my" },
 };
 

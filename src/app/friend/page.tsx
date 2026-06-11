@@ -11,6 +11,7 @@ import { FriendClient } from "./FriendClient";
 
 export const metadata: Metadata = {
   title: "友链",
+  description: "Loong·Blog 友链 — 以文会友，推荐优质博客与开发者",
   alternates: { canonical: "https://loongblog.fun/friend" },
 };
 

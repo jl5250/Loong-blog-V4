@@ -11,6 +11,7 @@ import CommentsSection from "@/components/home/CommentsSection";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
+  description: "Loong·Blog — 业余前端的技术博客与生活记录，分享前端开发、设计与生活感悟",
   alternates: { canonical: "https://loongblog.fun" },
 };
 

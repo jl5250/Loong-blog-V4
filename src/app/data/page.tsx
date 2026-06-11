@@ -17,6 +17,7 @@ import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "数据",
+  description: "Loong·Blog 数据总览 — 文章、标签、友链与评论统计",
   alternates: { canonical: "https://loongblog.fun/data" },
 };
 

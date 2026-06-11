@@ -10,6 +10,7 @@ import type { Footprint } from "@/types/footprint";
 export const revalidate = 300;
 export const metadata: Metadata = {
   title: "足迹",
+  description: "Loong·Blog 足迹地图 — 记录走过的城市与风景",
   alternates: { canonical: "https://loongblog.fun/footprint" },
 };
 

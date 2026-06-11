@@ -10,6 +10,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "标签云",
+  description: "Loong·Blog 标签云 — 按标签浏览文章分类",
   alternates: { canonical: "https://loongblog.fun/tags" },
 };
 
