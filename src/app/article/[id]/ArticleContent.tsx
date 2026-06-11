@@ -95,16 +95,18 @@ export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: A
     }
     const hash = window.location.hash;
     if (hash) {
+      // Delay to ensure DOM is ready, then scroll to anchor
       const timer = setTimeout(() => {
         const el = document.querySelector(hash);
-        if (el && lenis) lenis.scrollTo(el);
-        else if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
+        if (el) {
+          const y = (el as HTMLElement).getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo(0, y);
+        }
+      }, 200);
       return () => clearTimeout(timer);
     }
-    if (lenis) lenis.scrollTo(0, true);
-    else window.scrollTo(0, 0);
-  }, [lenis]);
+    window.scrollTo(0, 0);
+  }, []); // Only run once on mount
 
   const coverUrl = coverUrlProp || article.cover ||
     "https://bu.dusays.com/2023/11/10/654e2da1d80f8.jpg";
