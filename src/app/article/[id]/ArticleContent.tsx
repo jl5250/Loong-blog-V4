@@ -109,12 +109,24 @@ function TOCSidebar() {
 /* ───── Article Content ───── */
 export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: Article; coverUrl?: string }) {
   const lenis = useLenis();
-  // Force scroll to top when entering article
+  // Force scroll to top when entering article (unless URL has hash)
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // Disable auto scroll restoration
     if (window.history?.scrollRestoration) {
       window.history.scrollRestoration = "manual";
+    }
+    // If URL has hash, scroll to that element instead of top
+    const hash = window.location.hash;
+    if (hash) {
+      const el = document.querySelector(hash);
+      if (el) {
+        if (lenis) {
+          lenis.scrollTo(el as HTMLElement, true);
+        } else {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+        return;
+      }
     }
     if (lenis) {
       lenis.scrollTo(0, true);
