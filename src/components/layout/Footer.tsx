@@ -32,7 +32,12 @@ export function Footer() {
       .then((r) => r.json())
       .then((d) => {
         const ts = d?.data?.value?.create_time;
-        if (ts) setRt(calcRunTime(Number(ts)));
+        if (ts && Number(ts) > 0) {
+          setRt(calcRunTime(Number(ts)));
+        } else {
+          // Fallback: assume site started 1 year ago
+          setRt(calcRunTime(Date.now() - 365 * 86400000));
+        }
         const ft = d?.data?.value?.footer?.trim();
         if (ft) setFooterText(ft);
         else setFooterText("吾生也有涯，而知也无涯");
