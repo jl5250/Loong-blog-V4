@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import type { Character, Goal, Project } from "@/types/my";
 
 const API = process.env.NEXT_PUBLIC_PROJECT_API || "http://localhost:9003/api";
@@ -48,7 +49,7 @@ export default async function MyPage() {
             <div className="border border-border rounded-2xl p-6 bg-bg-surface text-center sticky top-28">
               <div className="w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden border-2 border-border">
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+                  <Image src={avatarUrl} alt={name} width={112} height={112} className="object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent2/20 flex items-center justify-center">
                     <span className="font-calligraphy text-4xl text-accent/80">{name[0] || "?"}</span>
@@ -121,7 +122,7 @@ export default async function MyPage() {
                     <div key={i} className="p-5 rounded-xl border border-border hover:border-accent/40 transition-all">
                       {p.images?.[0] && (
                         <div className="h-32 rounded-lg overflow-hidden mb-3 bg-bg-card">
-                          <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
+                          <Image src={p.images[0]} alt={p.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                         </div>
                       )}
                       <h3 className="font-serif font-bold text-base mb-1">{p.name}</h3>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getFootprintList } from "@/api/footprint";
 import { formatDate } from "@/lib/format";
 import { FootprintMap } from "@/components/ui/FootprintMap";
@@ -43,7 +44,7 @@ export default async function FootprintPage() {
                     <div className="flex flex-col md:flex-row">
                       <div className="md:w-48 h-36 md:h-auto flex-shrink-0 bg-bg-card relative overflow-hidden">
                         {images && images[0] ? (
-                          <img src={images[0]} alt={f.title} loading="lazy" className="w-full h-full object-cover" />
+                          <Image src={images[0]} alt={f.title} fill sizes="(max-width: 768px) 100vw, 192px" className="object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/5 to-accent2/5">
                             <span className="font-calligraphy text-3xl text-text-muted/15">📍</span>
