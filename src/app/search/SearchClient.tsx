@@ -62,7 +62,7 @@ export function SearchClient() {
         {/* Search bar */}
         <div className="flex gap-3 mb-10">
           <div className="flex-1 relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/30 text-sm font-sans">🔍</span>
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/30" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <input
               ref={inputRef}
               value={query}
@@ -145,7 +145,7 @@ export function SearchClient() {
         {/* Initial state */}
         {!searched && (
           <div className="text-center py-16 border border-dashed border-border rounded-2xl">
-            <span className="font-calligraphy text-5xl text-text-muted/10 mb-4 block">🔍</span>
+            <svg className="mx-auto mb-4 text-text-muted/10" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <p className="font-kai text-text-muted text-sm">输入关键词开始搜索</p>
             <div className="mt-6 flex justify-center gap-2 flex-wrap">
               {["ThriveX", "Markdown", "Hello World"].map((tag) => (

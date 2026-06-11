@@ -70,14 +70,14 @@ export default async function DataPage() {
         {/* Stats cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-10">
           {[
-            { label: "文章总计", value: String(totalArticles), color: "#ff4757", icon: "📝" },
-            { label: "评论总计", value: String(comments.length), color: "#00d2d3", icon: "💬" },
-            { label: "分类总计", value: String(cateCount), color: "#ecca6a", icon: "📂" },
-            { label: "友链总计", value: String(links.length), color: "#4a90ff", icon: "🔗" },
+            { label: "文章总计", value: String(totalArticles), color: "#ff4757", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838.838-2.872a2 2 0 0 1 .506-.854z"/></svg> },
+            { label: "评论总计", value: String(comments.length), color: "#00d2d3", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg> },
+            { label: "分类总计", value: String(cateCount), color: "#ecca6a", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/><path d="M11 12h4"/><path d="M11 16h7"/><path d="M11 20h10"/></svg> },
+            { label: "友链总计", value: String(links.length), color: "#4a90ff", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> },
           ].map((s) => (
             <div key={s.label} className="border border-border rounded-2xl p-6 bg-bg-surface hover:border-accent/30 transition-all">
               <div className="flex items-center gap-3 mb-3">
-                <span className="text-xl">{s.icon}</span>
+                <span className="text-xl" style={{ color: s.color }}>{s.icon}</span>
                 <span className="text-3xl font-serif font-bold" style={{ color: s.color }}>{s.value}</span>
               </div>
               <div className="text-xs text-text-muted font-sans">{s.label}</div>
