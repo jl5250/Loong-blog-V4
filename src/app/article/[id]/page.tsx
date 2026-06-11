@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getArticleData } from "@/api/article";
+import { getThemeConfig } from "@/api/config";
+import { getArticleCover, extractCovers } from "@/lib/article-cover";
 import { ArticleContent } from "./ArticleContent";
 
 interface Props {
@@ -10,9 +12,14 @@ interface Props {
 export async function generateMetadata(props: Props): Promise<Metadata> {
   try {
     const params = await props.params;
-    const res = await getArticleData(params.id);
+    const [res, themeRes] = await Promise.all([
+      getArticleData(params.id),
+      getThemeConfig(),
+    ]);
     const article = res.data;
     if (!article?.title) return { title: "文章" };
+    const themeCovers = extractCovers(themeRes.data?.value);
+    const cover = getArticleCover(article.cover, article.id, article.title, themeCovers);
     return {
       title: article.title,
       description: article.description,
@@ -22,7 +29,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       openGraph: {
         title: article.title,
         description: article.description,
-        images: article.cover ? [{ url: article.cover }] : [{ url: "/og-default.png" }],
+        images: cover.src ? [{ url: cover.src }] : [{ url: "/og-default.png" }],
       },
     };
   } catch {
@@ -32,10 +39,17 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function ArticlePage(props: Props) {
   const params = await props.params;
-  const res = await getArticleData(params.id);
+  const [res, themeRes] = await Promise.all([
+    getArticleData(params.id),
+    getThemeConfig(),
+  ]);
   const article = res.data;
 
   if (!article?.id) notFound();
+
+  // Resolve cover using same logic as homepage
+  const themeCovers = extractCovers(themeRes.data?.value);
+  const cover = getArticleCover(article.cover, article.id, article.title, themeCovers);
 
   // JSON-LD structured data
   const jsonLd = {
@@ -43,7 +57,7 @@ export default async function ArticlePage(props: Props) {
     "@type": "BlogPosting",
     headline: article.title,
     description: article.description,
-    image: article.cover || undefined,
+    image: cover.src || undefined,
     url: `https://loongblog.fun/article/${article.id}`,
     author: {
       "@type": "Person",
@@ -64,7 +78,7 @@ export default async function ArticlePage(props: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ArticleContent article={article} />
+      <ArticleContent article={article} coverUrl={cover.src} />
     </>
   );
 }

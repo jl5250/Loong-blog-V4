@@ -107,7 +107,7 @@ function TOCSidebar() {
 }
 
 /* ───── Article Content ───── */
-export function ArticleContent({ article }: { article: Article }) {
+export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: Article; coverUrl?: string }) {
   const lenis = useLenis();
   // Force scroll to top when entering article
   useEffect(() => {
@@ -125,7 +125,7 @@ export function ArticleContent({ article }: { article: Article }) {
     }
   }, [lenis]);
 
-  const coverUrl = article.cover ||
+  const coverUrl = coverUrlProp || article.cover ||
     "https://bu.dusays.com/2023/11/10/654e2da1d80f8.jpg";
 
   return (
