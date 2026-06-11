@@ -11,6 +11,7 @@ export function ArticleComments({ articleId }: { articleId: number }) {
   const [submitting, setSubmitting] = useState(false);
   const [formKey, setFormKey] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [apiError, setApiError] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const urlRef = useRef<HTMLInputElement>(null);
@@ -20,8 +21,14 @@ export function ArticleComments({ articleId }: { articleId: number }) {
       const res = await getArticleComments(articleId);
       if (res.code === 200 && res.data) {
         setComments(res.data.result ?? []);
+        setApiError(false);
+      } else if (res.code === 500) {
+        setApiError(true);
       }
-    } catch (e) { console.error("Fetch comments failed:", e); }
+    } catch (e) {
+      console.error("Fetch comments failed:", e);
+      setApiError(true);
+    }
     setLoading(false);
   }, [articleId]);
 
@@ -157,7 +164,26 @@ export function ArticleComments({ articleId }: { articleId: number }) {
 
       {/* Comment list */}
       {loading ? (
-        <p className="font-sans text-sm text-text-muted animate-pulse">加载中...</p>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-xl border border-border bg-bg-surface p-4 animate-pulse">
+              <div className="flex gap-3">
+                <div className="w-9 h-9 rounded-full bg-bg-surface-raised" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-20 bg-bg-surface-raised rounded" />
+                  <div className="h-3 w-full bg-bg-surface-raised rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : apiError ? (
+        <div className="text-center py-10 border border-dashed border-border rounded-xl">
+          <p className="font-kai text-text-muted text-sm">评论服务暂时不可用，请稍后再试</p>
+          <button onClick={fetchComments} className="mt-3 text-xs text-accent hover:text-accent2 transition-colors font-sans">
+            重新加载
+          </button>
+        </div>
       ) : topComments.length > 0 ? (
         <div className="space-y-4">
           {topComments.map((c) => (
