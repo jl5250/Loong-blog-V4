@@ -51,7 +51,7 @@ export function Header() {
   useEffect(() => { setMobileMenuOpen(false); }, [pathname]);
 
   // API returns tree structure: top-level items with nested children
-  const topCates = cates.filter((c) => !c.isHide);
+  const topCates = cates.filter((c) => !c.isHide && c.name !== "首页" && c.url !== "/");
 
   // Flatten tree for mobile: recursively collect all nav items
   const flattenNav = (items: Cate[]): { name: string; url: string }[] => {
