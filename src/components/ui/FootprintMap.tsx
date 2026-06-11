@@ -10,7 +10,7 @@ interface FootprintItem {
   position?: string;
   content?: string;
   images?: string[];
-  createTime?: string;
+  createTime?: number;
 }
 
 export function FootprintMap({ items }: { items: FootprintItem[] }) {

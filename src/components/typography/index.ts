@@ -1,1 +1,0 @@
-export { SplitTextHeading } from "./SplitTextHeading";
