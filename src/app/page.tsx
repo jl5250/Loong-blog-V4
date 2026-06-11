@@ -33,8 +33,18 @@ function SectionSkeleton({ height = "400px" }: { height?: string }) {
 }
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Loong·Blog",
+    url: "https://loongblog.fun",
+    description: "Loong·Blog — 业余前端的技术博客与生活记录",
+    publisher: { "@type": "Person", name: "Loong" },
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <main className="flex-1">
         {/* ===== Hero ===== */}
         <section
