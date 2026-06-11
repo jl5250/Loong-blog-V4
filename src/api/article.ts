@@ -16,8 +16,10 @@ export const getArticlePaging = (page: number, size: number, key?: string, cateI
 export const getRandomArticleList = () =>
   request<Article[]>("GET", "/article/random");
 
-export const getRecommendedArticleList = () =>
-  request<Article[]>("GET", "/article/hot");
+export const getRecommendedArticleList = (count?: number) =>
+  request<Article[]>("GET", "/article/hot", {
+    ...(count ? { params: { count } } : {}),
+  });
 
 export const recordView = (id: number) =>
   request<void>("GET", `/article/view/${id}`);
