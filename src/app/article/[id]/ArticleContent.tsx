@@ -122,10 +122,10 @@ export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: A
             style={{ backgroundImage: `url(${coverUrl})` }}
           />
           {/* Dark overlay */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-primary), rgba(0,0,0,0.55) 30%, rgba(0,0,0,0.45) 70%, var(--bg-primary) 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-primary), rgba(0,0,0,0.25) 35%, rgba(0,0,0,0.2) 65%, var(--bg-primary) 100%)" }} />
 
           {/* Centered content on hero */}
-          <div className="relative z-10 text-center max-w-4xl mx-auto backdrop-blur-sm bg-black/50 rounded-2xl py-10 px-8">
+          <div className="relative z-10 text-center max-w-4xl mx-auto backdrop-blur-sm bg-black/15 rounded-2xl py-10 px-8">
             {/* Categories */}
             <div className="flex justify-center gap-2 mb-6">
               {article.cateList?.map((c) => (
@@ -137,12 +137,12 @@ export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: A
             </div>
 
             {/* Title */}
-            <h1 className="font-serif font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 overflow-hidden line-clamp-2 text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}>
+            <h1 className="font-serif font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 drop-shadow-2xl overflow-hidden line-clamp-2" style={{ textShadow: "var(--hero-text-shadow)" }}>
               {article.title}
             </h1>
 
             {/* Meta */}
-            <div className="flex justify-center items-center gap-3 md:gap-8 text-xs md:text-base font-sans text-white/90 flex-wrap" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
+            <div className="flex justify-center items-center gap-3 md:gap-8 text-xs md:text-base font-sans text-text-body/90 flex-wrap" style={{ textShadow: "var(--hero-text-shadow)" }}>
               <span className="flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
                 <span className="font-medium">{formatDate(article.createTime)}</span>

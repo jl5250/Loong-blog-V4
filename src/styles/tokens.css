@@ -26,6 +26,7 @@
   --ink-texture: rgba(0, 0, 0, 0.03);
   --glow-soft: rgba(196, 69, 69, 0.08);
   --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --hero-text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
   --particle-color: rgba(100, 100, 100, 0.12);
 
   /* Typography — fonts defined in src/styles/fonts.css */
@@ -62,5 +63,6 @@
   --ink-texture: rgba(255, 255, 255, 0.03);
   --glow-soft: rgba(255, 71, 87, 0.15);
   --shadow-card: 0 2px 20px rgba(0, 0, 0, 0.35);
+  --hero-text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
   --particle-color: rgba(0, 210, 211, 0.08);
 }
