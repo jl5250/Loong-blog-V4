@@ -125,7 +125,7 @@ export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: A
           <div className="absolute inset-0" style={{ background: "linear-gradient(to top, var(--bg-primary), transparent 40%, var(--bg-primary) 100%)" }} />
 
           {/* Centered content on hero */}
-          <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+          <div className="relative z-10 text-center max-w-4xl mx-auto backdrop-blur-md bg-black/30 rounded-2xl py-10 px-8">
             {/* Categories */}
             <div className="flex justify-center gap-2 mb-6">
               {article.cateList?.map((c) => (
