@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Article } from "@/types/article";
 import { formatDate } from "@/lib/format";
 import { recordView } from "@/api/article";
+import { normalizeCoverUrl } from "@/lib/article-cover";
 import { ArticleComments } from "@/components/article/ArticleComments";
 import { MarkdownRenderer } from "@/components/article/MarkdownRenderer";
 
@@ -105,7 +106,7 @@ export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: A
     window.scrollTo(0, 0);
   }, []);
 
-  const coverUrl = coverUrlProp || article.cover ||
+  const coverUrl = coverUrlProp || normalizeCoverUrl(article.cover) ||
     "https://bu.dusays.com/2023/11/10/654e2da1d80f8.jpg";
 
   return (

@@ -11,13 +11,26 @@ export interface CoverResult {
   isGradient: boolean;
 }
 
+export function normalizeCoverUrl(raw: string): string {
+  if (!raw) return "";
+  // Backend may store cover as a JSON array string, e.g. '["https://..."]'
+  if (raw.startsWith("[")) {
+    try {
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr) && arr.length > 0) return arr[0];
+    } catch { /* fall through */ }
+  }
+  return raw;
+}
+
 export function getArticleCover(
   cover: string | undefined | null,
   id: number | undefined,
   title: string | undefined,
   themeCovers: string[]
 ): CoverResult {
-  if (cover) return { src: cover, alt: title || "文章封面", isGradient: false };
+  const url = normalizeCoverUrl(cover ?? "");
+  if (url) return { src: url, alt: title || "文章封面", isGradient: false };
   if (themeCovers.length > 0 && id) {
     return {
       src: themeCovers[Math.abs(id) % themeCovers.length],

@@ -2,6 +2,7 @@ import { Swiper } from "@/components/ui/Swiper";
 import { getSwiperList } from "@/api/swiper";
 import { getRecommendedArticleList } from "@/api/article";
 import { extractFromSettled } from "@/lib/api-helpers";
+import { normalizeCoverUrl } from "@/lib/article-cover";
 import type { Swiper as SwiperType } from "@/types/swiper";
 import type { Article } from "@/types/article";
 
@@ -25,7 +26,7 @@ export default async function SwiperSection() {
         title: a.title,
         description: a.description || "",
         tag: a.cateList?.[0]?.name || "文章",
-        image: a.cover || "",
+        image: normalizeCoverUrl(a.cover),
       }));
 
   return (
