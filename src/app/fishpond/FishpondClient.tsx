@@ -70,12 +70,11 @@ export default function FishpondPage() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-9 h-9 rounded-full overflow-hidden bg-bg-card flex-shrink-0 border border-border">
                     {item.image ? (
-                      <img src={item.image} alt={getAuthorName(item)} loading="lazy" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[.6rem] font-bold text-text-muted">
-                        {getAuthorName(item)[0]}
-                      </div>
-                    )}
+                      <img src={item.image} alt={getAuthorName(item)} loading="lazy" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden"); }} />
+                    ) : null}
+                    <div className={`w-full h-full flex items-center justify-center text-[.6rem] font-bold text-text-muted ${item.image ? "hidden" : ""}`}>
+                      {getAuthorName(item)[0]}
+                    </div>
                   </div>
                   <div>
                     <div className="font-serif font-bold text-xs text-text-body">
