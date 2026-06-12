@@ -6,4 +6,4 @@ export const getTagList = () =>
   request<Tag[]>("GET", "/tag");
 
 export const getTagArticles = (id: number) =>
-  request<Article[]>("GET", `/tag/${id}/articles`);
+  request<Article[]>("GET", `/article/tag/${id}`);
