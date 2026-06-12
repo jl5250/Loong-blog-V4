@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Article } from "@/types/article";
 import { formatDate } from "@/lib/format";
+import { recordView } from "@/api/article";
 import { ArticleComments } from "@/components/article/ArticleComments";
 import { MarkdownRenderer } from "@/components/article/MarkdownRenderer";
 
@@ -82,6 +83,11 @@ function TOCSidebar() {
 
 /* ───── Article Content ───── */
 export function ArticleContent({ article, coverUrl: coverUrlProp }: { article: Article; coverUrl?: string }) {
+  // Record a page view once on mount
+  useEffect(() => {
+    if (article.id) recordView(article.id);
+  }, [article.id]);
+
   // Force scroll to top when entering article (unless URL has hash)
   useEffect(() => {
     if (typeof window === "undefined") return;
