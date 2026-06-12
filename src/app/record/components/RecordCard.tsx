@@ -60,6 +60,20 @@ function getRelativeTimeLabel(ts: number | string | undefined): string {
   return "";
 }
 
+/** Parse images field — handles JSON array strings, actual arrays, and single URLs */
+function parseRecordImages(images: string | string[] | null | undefined): string[] {
+  if (!images) return [];
+  if (Array.isArray(images)) return images.filter(Boolean);
+  const trimmed = images.trim();
+  if (trimmed.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return parsed.filter(Boolean);
+    } catch { /* fall through */ }
+  }
+  return [trimmed];
+}
+
 /** Detect if content contains HTML tags */
 function isHTML(str: string): boolean {
   return /<[a-z][\s\S]*>/i.test(str);
@@ -118,7 +132,7 @@ export default function RecordCard({ record, isLast }: RecordCardProps) {
 
           {/* Images */}
           <div className="mt-3">
-            <ImageList list={Array.isArray(images) ? images.filter(Boolean) as string[] : images ? [images] : []} />
+            <ImageList list={parseRecordImages(images)} />
           </div>
         </div>
       </div>
