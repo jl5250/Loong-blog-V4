@@ -13,6 +13,9 @@ export const getArticlePaging = (page: number, size: number, key?: string, cateI
     params: { pageNum: page, pageSize: size, key, cateId, tagId },
   });
 
+export const getArticleByCate = (cateId: number) =>
+  request<Article[]>("GET", `/article/cate/${cateId}`);
+
 export const getRandomArticleList = () =>
   request<Article[]>("GET", "/article/random");
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getCateList } from "@/api/cate";
-import { getArticlePaging } from "@/api/article";
+import { getArticleByCate } from "@/api/article";
 import { extractResult } from "@/lib/api-helpers";
 import type { Cate } from "@/types/cate";
 import type { Article } from "@/types/article";
@@ -33,12 +33,12 @@ export default async function CatePage(props: Props) {
 
   const [listRes, articlesRes] = await Promise.allSettled([
     getCateList(),
-    getArticlePaging(1, 20, "", cateId),
+    getArticleByCate(cateId),
   ]);
 
   const cates: Cate[] = listRes.status === "fulfilled" ? extractResult<Cate>(listRes.value) : [];
   const cate = cates.find((c) => c.id === cateId);
-  const articles: Article[] = articlesRes.status === "fulfilled" ? (articlesRes.value.data?.result ?? []) : [];
+  const articles: Article[] = articlesRes.status === "fulfilled" ? extractResult(articlesRes.value) : [];
 
   return (
     <main className="flex-1 pt-28 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto">
